@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | any>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
     const request = async (method: 'get' | 'post' | 'put' | 'delete', url: string , body?: any ) => {
         setLoading(true);
@@ -48,6 +49,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             });
             
             setUser(response.data.user);
+            setIsAuthenticated(true);
+            console.log(user) ;
             return response ;
         } catch (err : string | any) {
             const backendError = err?.response?.data?.error;
@@ -59,14 +62,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const logout = () =>{
+      console.log('Logging out...') ;
       setUser(null) ;
+      setIsAuthenticated(false) ;
     }
 
     return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user,
+        isAuthenticated,
         loading,
         error,
         request,

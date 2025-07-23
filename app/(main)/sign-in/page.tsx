@@ -19,7 +19,10 @@ export default function Page() {
     const res = await request('post', '/sign-in', { email, password });
     if(res && res.status === 200){
       console.log('Redirecting to dashboard...');
-      replace('/dashboard');
+      
+      //change to role based redirect
+      // For now, redirect to lister dashboard
+      replace('/dashboard/lister');
     }
 
   }
