@@ -1,0 +1,12 @@
+
+@import "tailwind.css" ;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+div {
+  @apply font-sans text-blue-600 border border-blue-500 rounded-lg 
+         p-6 text-center shadow-sm w-full max-w-md mx-auto my-auto 
+         min-h-screen flex items-center justify-center text-xl font-semibold;
+}
