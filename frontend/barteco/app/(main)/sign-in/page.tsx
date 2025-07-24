@@ -3,14 +3,27 @@
 import { useRouter  } from "next/navigation";
 import { useAuth } from "@/app/useAuth";
 import Link from 'next/link';
+import { useActionState } from 'react';
+import { authenticate } from '@/app/lib/action';
+import { useSearchParams } from 'next/navigation';
+
 
 export default function Page() {
+
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('redirectTo') || '/dashboard/lister';
+  const [errorMessage, formAction, isPending] = useActionState(
+    authenticate,
+    undefined,
+  );
+  //await createSession(); // Replace with actual user ID after authentication
+
   
-  const { replace } = useRouter();
-  const { request , loading , error } = useAuth() ;
+  //const { replace } = useRouter();
+  //const { request , loading , error } = useAuth() ;
 
   // This is a simple sign-up page component
-  async function handleSubmit(event : React.FormEvent<HTMLFormElement>){
+  /*async function handleSubmit(event : React.FormEvent<HTMLFormElement>){
     event.preventDefault() ;
 
     const email = event.currentTarget.email.value as string;
@@ -25,16 +38,14 @@ export default function Page() {
       replace('/dashboard/lister');
     }
 
-  }
+  }*/
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Sign In</h2>
-        <span>
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}  
-        </span>
-        <form action="submit" onSubmit={handleSubmit} className="space-y-4">
+        
+        <form action={formAction} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
@@ -62,18 +73,20 @@ export default function Page() {
           </div>
 
           
-
+          <input type="hidden" name="redirectTo" value={callbackUrl} />
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition"
-            disabled={loading}
+            
           >
             Sign In
           </button>
+          {errorMessage && (
+            <p className="text-red-500 text-sm mt-2 text-center">
+              {errorMessage}
+            </p>
+          )}
 
-          {
-            loading && <p className="text-blue-500 text-sm mt-2">Loading...</p>
-          }
 
           <p className="text-sm text-gray-600 text-center mt-4">
             or

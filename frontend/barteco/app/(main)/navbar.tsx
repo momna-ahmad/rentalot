@@ -2,6 +2,8 @@
 import './globals.css';
 import SignInButton from './sign-in-button';
 
+
+
 export default function Navbar() {
 
     return(
@@ -9,8 +11,7 @@ export default function Navbar() {
             <div className="font-bold text-2xl">
                 Rentalot.
             </div>
-            <SignInButton>
-            </SignInButton>
+            <SignInButton/>
             
             
         </div>

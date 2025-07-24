@@ -40,6 +40,7 @@ router.post('/sign-up', async (req, res) => {
 }) ;
 
 router.post('/sign-in', async (req, res) => {
+  console.log('sign-in route hit');
     const { email, password } = req.body;
 
     const { data , error} = await supabase.from('users').select('*')
@@ -60,14 +61,45 @@ router.post('/sign-in', async (req, res) => {
     else{
       const { data: userData, error: userError } = await supabase.from('users').select('*')
       .eq('user_uid' , authData.user.id).limit(1) ;
-      
-      res.send(200).json({
+      console.log('userData' + userData[0].id);
+      res.status(200).json({
+        user : {
+          email: userData[0].email,
+          role: userData[0].role,
+          id: userData[0].id,
+        },
         token: authData.session ,
-        role: userData.role ,
-        id: userData.id,
+        
       })
     }
  
 }) ;
+
+router.post("/add-listings" , async (req, res) => {
+  
+  const {
+    title,
+    description,
+    price,
+    category,
+    userId  
+  } = req.body ;
+
+  const { data, error } = await supabase.from('listings').insert([
+    {
+      title,
+      description,
+      price,
+      category,
+      image_url: imageUrl,
+      user_id: userId
+    }
+  ]);
+  if (error) {
+    return res.status(400).json({ error: error.message });
+  }else{
+    res.status(200).json({ message: 'Listing added successfully'});
+  }
+});
 
 export default router;
