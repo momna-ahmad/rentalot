@@ -25,9 +25,9 @@ export const { auth, signIn, signOut } = NextAuth({
         return null;
       else
       {
-        const { user } = await res.json();
-        const userId = user.id;
-        await createSession(userId);
+        const { user , token } = await res.json();
+        const userId = user.id; 
+        await createSession(userId, token);
         console.log('User signed in successfully created session in auth.ts');
         return user;
       }

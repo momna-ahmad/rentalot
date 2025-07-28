@@ -3,13 +3,14 @@
 import 'server-only'
 import { cookies } from 'next/headers'
  
-export async function createSession(userId: string) {
+export async function createSession(userId: string , token: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   const session = JSON.stringify({
     userId,
+    token,
     expiresAt: expiresAt.toISOString(),
   });
-  const cookieStore = await cookies()
+  const cookieStore = await cookies();
  
   cookieStore.set('session', session, {
     httpOnly: true,

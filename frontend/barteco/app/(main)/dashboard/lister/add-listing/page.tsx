@@ -1,78 +1,76 @@
-
+'use client'
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/useAuth";
 import useAxios from "@/hooks/useAxios";
+import { useActionState } from 'react';
+import { useState } from "react";
+
 
 export default function Page() {
+  const { replace } = useRouter() ;
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    category: '',
+    price: '',
+    unit: ''
+  });
+  const [error,  setError] = useState('') ;
 
+    
     //server actions to mutate data
-    async function create(formData: FormData) {
-    'use server';
-        
 
-  const title = formData.get("title") ;
-  const description = formData.get("description");
-  const category = formData.get("category");
-  const price = formData.get("price");
-  const unit = formData.get("unit");
-        const data = {
-            title,
-            description,
-            category,
-            price,
-            unit,
-            lister: user?.id
-        };
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) =>{
+      event.preventDefault() ;
+      const { title, description, category, price, unit } = formData;
+   if (!title || !description || !category || !price || !unit) {
+    setError("All fields are required.");
+   }
+   else{
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-listings`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(data),
-        });
-        if(response?.status === 200){
-          replace("/dashboard/lister/listings");
-        }
-  }
-
-    /*const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) =>{
-      console.log("Form submitted");
-        event.preventDefault() ;
-        const form = event.currentTarget;
-
-  const title = form.title.value ;
-  const description = form.description.value;
-  const category = form.category.value;
-  const price = form.price.value;
-  const unit = form.unit.value;
-        const data = {
+          credentials: 'include',
+          body: JSON.stringify({
             title,
             description,
             category,
             price,
             unit,
-            lister: user?.id
-        };
-        const response = await request("post" , "/add-listings" , data) ;
-        if(response?.status === 200){
-          replace("/dashboard/lister/listings");
-        }
-    }*/
+          }),
+        });
+
+        if(response.status === 200)
+          replace('/dashboard/lister') ;
+        else
+          setError('unexpected error');
+   }
+       
+
+    }
 
     return (
         <>
-                <form action={create}  className="space-y-6 p-6 border border-gray-300 rounded-lg shadow-md max-w-md mx-auto bg-white">
+                <form onSubmit={handleSubmit} className="space-y-6 p-6 border border-gray-300 rounded-lg shadow-md max-w-md mx-auto bg-white">
   <div>
-    <span>
-            {error && <p className="text-red-500 text-sm mt-2">{error.value}</p>}  
-        </span>
+    { error !='' && (
+            <p className="text-red-500 text-sm mt-2 text-center">
+              {error}
+            </p>
+          )}
     <label className="block text-sm font-medium text-gray-700 mb-1">
       Title
     </label>
     <input
-      name=""
+      name="title"
       type="text"
       placeholder="Enter descriptive title"
+      onChange={(e)=>{
+        setFormData((prev) => ({ ...prev, title: e.target.value }));
+      }}
       className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
   </div>
@@ -84,6 +82,9 @@ export default function Page() {
     <input
       name="description"
       type="text"
+      onChange={(e)=>{
+        setFormData((prev) => ({ ...prev, description: e.target.value }));
+      }}
       placeholder="Add detailed description"
       className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
@@ -96,6 +97,9 @@ export default function Page() {
     <input
       name="price"
       type="text"
+      onChange={(e)=>{
+        setFormData((prev) => ({ ...prev, price: e.target.value }));
+      }}
       placeholder="Add price"
       className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
@@ -108,6 +112,9 @@ export default function Page() {
     <input
       name="unit"
       type="text"
+      onChange={(e)=>{
+        setFormData((prev) => ({ ...prev, unit: e.target.value }));
+      }}
       placeholder="Add unit (day, hour, etc.)"
       className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
@@ -119,6 +126,9 @@ export default function Page() {
     </label>
     <select
       name="category"
+      onChange={(e)=>{
+        setFormData((prev) => ({ ...prev, category: e.target.value }));
+      }}
       className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       defaultValue=""
     >

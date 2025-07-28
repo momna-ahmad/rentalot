@@ -1,7 +1,9 @@
 import express from 'express';
 import supabase from './supabase-client.js';
+import cookieParser from 'cookie-parser';
 
 const router = express.Router();
+router.use(cookieParser());
 
 router.post('/sign-up', async (req, res) => {
     const { email, password } = req.body;
@@ -76,23 +78,32 @@ router.post('/sign-in', async (req, res) => {
 }) ;
 
 router.post("/add-listings" , async (req, res) => {
-  
+
+  const session = JSON.parse(req.cookies.session);
+  const userId = session.userId;
+  console.log(req.body) ;
+  console.log(userId) ;
   const {
     title,
     description,
     price,
     category,
-    userId  
+    unit,
   } = req.body ;
 
+  console.log('DATA ' ,title, description , price , category , unit);
+  
+  if(!title || !description )
+    res.status(400).json({error : "fields required"}) ;
+  else{
   const { data, error } = await supabase.from('listings').insert([
     {
       title,
       description,
       price,
       category,
-      image_url: imageUrl,
-      user_id: userId
+      unit,
+      'owner' : userId
     }
   ]);
   if (error) {
@@ -100,6 +111,7 @@ router.post("/add-listings" , async (req, res) => {
   }else{
     res.status(200).json({ message: 'Listing added successfully'});
   }
+}
 });
 
 export default router;
