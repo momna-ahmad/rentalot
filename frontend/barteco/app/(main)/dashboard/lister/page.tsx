@@ -2,6 +2,8 @@
 import './styles.css';
 import Link from 'next/link';
 import Listings from './listings';
+import { Suspense } from 'react';
+import Loading from './loading' ;
 
 export default function Page() {
   
@@ -16,9 +18,10 @@ export default function Page() {
       Add to your listings
     </div>
     </Link>
-    <Listings />
-
-    
+    {/* Any content wrapped in a <Suspense> boundary will be streamed */}
+    <Suspense fallback={<Loading/>}>
+      <Listings />
+    </Suspense>
 
     </>
     

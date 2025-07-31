@@ -81,8 +81,7 @@ router.post("/add-listings" , async (req, res) => {
 
   const session = JSON.parse(req.cookies.session);
   const userId = session.userId;
-  console.log(req.body) ;
-  console.log(userId) ;
+
   const {
     title,
     description,
@@ -113,5 +112,50 @@ router.post("/add-listings" , async (req, res) => {
   }
 }
 });
+
+router.get("/get-user-listings",async (req , res)=>{
+  console.log(req.cookies.session);
+  const session = JSON.parse(req.cookies.session);
+  const userId = session.userId;
+  console.log(userId);
+  const {data , error} = await supabase.from('listings').select('*').eq('owner',userId) ;
+  console.log(data) ;
+  if(error)
+    return res.send(error);
+  res.send(data) ;
+});
+
+router.get("/get-listing/:id",async (req , res)=>{
+  const id = req.params.id ;
+  console.log(id) ;
+  const {data , error} = await supabase.from('listings').select('*').eq('id',id).limit(1) ;
+  console.log(data[0]) ;
+  if(error)
+    return res.send(error) ;
+  res.send(data[0]) ;
+
+});
+
+router.get("/delete-listing/:id",async (req , res)=>{
+  const id = req.params.id ;
+  console.log('delete route hit' , id ) ;
+  const {data , error} = await supabase.from('listings').delete().eq('id',id) ;
+  if(error)
+    return res.send(error) ;
+  res.send('success') ;
+
+});
+
+router.post("/edit-listing/:id",async (req , res)=>{
+  const id = req.params.id ;
+  const {title , description , price , unit , category } = req.body ;
+  const {data , error} = await supabase.from('listings').update({ title, description, price, unit, category }).eq('id',id) ;
+  if(error)
+    return res.send(error) ;
+  res.send('success') ;
+
+});
+
+
 
 export default router;
