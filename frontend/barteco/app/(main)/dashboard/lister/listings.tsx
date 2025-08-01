@@ -32,6 +32,19 @@ export default async function Listings(){
                 →
               </span>
               {listing.title}</h2>
+               {/* Cloudinary image rendering */}
+      {Array.isArray(listing.img_urls) && listing.img_urls.length > 0 && (
+        <div className="flex gap-4 mb-2">
+          {listing.img_urls.map((url: string, index: number) => (
+            <img
+              key={index}
+              src={url}
+              alt={`Listing Image ${index + 1}`}
+              className="w-32 h-32 object-cover rounded-md border"
+            />
+          ))}
+        </div>
+      )}
             <p className="text-gray-600 mb-1">
               <span className="font-medium">Price:</span> {listing.price} per {listing.unit}
             </p>

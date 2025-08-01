@@ -1,9 +1,12 @@
 import express from 'express';
 import supabase from './supabase-client.js';
 import cookieParser from 'cookie-parser';
+import multer from 'multer';
+import { storage } from '../utils/cloudinary.js';
 
 const router = express.Router();
 router.use(cookieParser());
+const upload = multer({ storage });
 
 router.post('/sign-up', async (req, res) => {
     const { email, password } = req.body;
@@ -77,11 +80,16 @@ router.post('/sign-in', async (req, res) => {
  
 }) ;
 
-router.post("/add-listings" , async (req, res) => {
+router.post("/add-listings" , upload.array('images', 5), async (req, res) => {
 
   const session = JSON.parse(req.cookies.session);
   const userId = session.userId;
-
+  let imageUrls ;
+  if(req.files.length>0)
+    imageUrls = req.files.map(file => file.path);
+  else
+    imageUrls = null ;
+   
   const {
     title,
     description,
@@ -102,7 +110,8 @@ router.post("/add-listings" , async (req, res) => {
       price,
       category,
       unit,
-      'owner' : userId
+      'owner' : userId,
+      img_urls : imageUrls,
     }
   ]);
   if (error) {

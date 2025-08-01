@@ -8,6 +8,8 @@ import { useState } from "react";
 
 export default function Page() {
   const { replace } = useRouter() ;
+  const [files, setFiles] = useState<FileList | null>(null);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -25,20 +27,24 @@ export default function Page() {
     setError("All fields are required.");
    }
    else{
+    const payload = new FormData();
+    payload.append('title', title);
+    payload.append('description', description);
+    payload.append('price', price);
+    payload.append('unit', unit);
+    payload.append('category', category);
 
+    // Append all selected images
+    if(files != null)
+    Array.from(files).forEach((file) => {
+      payload.append('images', file);
+    });
+
+    //json header causes error because file data cant be read as json
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-listings`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           credentials: 'include',
-          body: JSON.stringify({
-            title,
-            description,
-            category,
-            price,
-            unit,
-          }),
+          body: payload
         });
 
         if(response.status === 200)
@@ -52,7 +58,9 @@ export default function Page() {
 
     return (
         <>
-                <form onSubmit={handleSubmit} className="space-y-6 p-6 border border-gray-300 rounded-lg shadow-md max-w-md mx-auto bg-white">
+                <form onSubmit={handleSubmit} className="space-y-6 p-6 border border-gray-300 rounded-lg shadow-md max-w-md mx-auto bg-white" 
+                encType="multipart/form-data"
+                >
   <div>
     { error !='' && (
             <p className="text-red-500 text-sm mt-2 text-center">
@@ -137,6 +145,17 @@ export default function Page() {
       <option value="others">Others</option>
     </select>
   </div>
+
+  <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Images (max 5)</label>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={(e) => setFiles(e.target.files)}
+          className="w-full"
+        />
+      </div>
 
   <button
     type="submit"
