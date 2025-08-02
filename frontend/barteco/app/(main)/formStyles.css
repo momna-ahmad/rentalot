@@ -1,11 +1,22 @@
 /* styles.css */
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
+
 @tailwind utilities;
 
 /* Optional: custom styles */
 body {
   @apply bg-white text-gray-900;
 }
+
+.btn {
+    @apply px-4 py-2 rounded font-medium transition;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+  }
+
+  .btn-outline {
+    @apply border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white;
+  }

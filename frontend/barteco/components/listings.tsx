@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
+import DisplayImg from './display-images';
 
 export default async function Listings(){
     const cookieStore = await cookies();
@@ -24,33 +25,40 @@ export default async function Listings(){
           
           <div
             key={listing.id}
-            className="border border-gray-300 rounded-lg shadow-sm p-6 hover:shadow-md transition duration-200 bg-white"
+            className="group/item border border-gray-300 rounded-lg shadow-sm p-6 hover:shadow-md transition duration-200 bg-white"
           >
+            {/* Conditionally render */}
+        
+        
+
+               {
+                
+                listing.img_urls?.length > 0 && (
+                  <div className='float-left mr-4 w-32'>
+                  <DisplayImg imgs={listing.img_urls}/>
+                  </div>
+                )
+                
+               }
+
             <Link href={`/dashboard/lister/${listing.id}`}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="group/edit invisible group-hover/item:visible float-right size-6 group-hover/edit:translate-x-0.5 group-hover/edit:text-gray-500">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">
-              <span className="opacity-0 group-hover:opacity-100 transform transition-opacity duration-200 text-gray-500 text-sm">
-                →
-              </span>
               {listing.title}</h2>
-               {/* Cloudinary image rendering */}
-      {Array.isArray(listing.img_urls) && listing.img_urls.length > 0 && (
-        <div className="flex gap-4 mb-2">
-          {listing.img_urls.map((url: string, index: number) => (
-            <img
-              key={index}
-              src={url}
-              alt={`Listing Image ${index + 1}`}
-              className="w-32 h-32 object-cover rounded-md border"
-            />
-          ))}
-        </div>
-      )}
+
+
+               
+
             <p className="text-gray-600 mb-1">
               <span className="font-medium">Price:</span> {listing.price} per {listing.unit}
             </p>
             <p className="text-gray-600">
               <span className="font-medium">Category:</span> {listing.category}
             </p>
+
+
             </Link>
           </div>
           

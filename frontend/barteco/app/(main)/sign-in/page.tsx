@@ -1,10 +1,10 @@
 'use client';
 
 import { useRouter  } from "next/navigation";
-import { useAuth } from "@/app/useAuth";
+import { useAuth } from "@/context/useAuth";
 import Link from 'next/link';
 import { useActionState } from 'react';
-import { authenticate } from '@/app/lib/action';
+import { authenticate } from '@/lib/action';
 import { useSearchParams } from 'next/navigation';
 
 
@@ -76,7 +76,7 @@ export default function Page() {
           <input type="hidden" name="redirectTo" value={callbackUrl} />
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition"
+            className="btn btn-outline w-full"
             
           >
             Sign In
@@ -92,8 +92,10 @@ export default function Page() {
             or
           </p>
 
-          <Link href={"/sign-up"} className="text-blue-600 hover:text-blue-700 text-sm text-center block mt-4">
-          Sign up 
+          <Link href={"/sign-up"} >
+          <button className=" text-center w-full block border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:border-transparent hover:bg-blue-600 hover:text-white active:bg-blue-700 transition ">
+                    Sign Up
+            </button>
           </Link>
 
         </form>

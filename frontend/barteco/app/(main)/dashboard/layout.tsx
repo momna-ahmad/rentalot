@@ -1,5 +1,5 @@
 import "../formStyles.css"
-import Navbar from "../navbar";
+import Navbar from "../../../components/navbar";
 
 export const metadata = {
   title: 'Next.js',

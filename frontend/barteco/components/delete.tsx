@@ -1,7 +1,7 @@
 'use client'
 
 import { useContext } from 'react' ;
-import { ListingContext } from './useListingContext';
+import { ListingContext } from '@/context/useListingContext';
 import Link from 'next/link';
 
 export default function Delete(){

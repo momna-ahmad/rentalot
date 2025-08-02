@@ -1,5 +1,5 @@
-import ActionsOnListings from "./actions-on-listings";
-import ListingProvider from "./useListingContext";
+import ActionsOnListings from "../../../../../components/actions-on-listings";
+import ListingProvider from "../../../../../context/useListingContext";
 
 interface PageProps {
   params: { id: string };

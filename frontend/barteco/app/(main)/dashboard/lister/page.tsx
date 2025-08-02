@@ -1,7 +1,7 @@
 
 import './styles.css';
 import Link from 'next/link';
-import Listings from './listings';
+import Listings from '../../../../components/listings';
 import { Suspense } from 'react';
 import Loading from './loading' ;
 
