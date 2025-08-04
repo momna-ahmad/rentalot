@@ -30,8 +30,7 @@ export async function authenticate(
 export async function signout(){
   const cookieStore = await cookies();
   cookieStore.set('session', '', { path: '/', maxAge: 0 });
-  await signOut({ redirectTo: '/' });
-
+  return await signOut({ redirectTo: '/' });
 }
 
 

@@ -3,6 +3,7 @@ import supabase from './supabase-client.js';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import { storage } from '../utils/cloudinary.js';
+import authenticate from '../middleware/authentication.js';
 
 const router = express.Router();
 router.use(cookieParser());
@@ -44,7 +45,7 @@ router.post('/sign-up', async (req, res) => {
  
 }) ;
 
-router.post('/sign-in', async (req, res) => {
+router.post('/sign-in',  async (req, res) => {
   console.log('sign-in route hit');
     const { email, password } = req.body;
 
@@ -67,6 +68,7 @@ router.post('/sign-in', async (req, res) => {
       const { data: userData, error: userError } = await supabase.from('users').select('*')
       .eq('user_uid' , authData.user.id).limit(1) ;
       console.log('userData' + userData[0].id);
+      console.log('session' , authData) ;
       res.status(200).json({
         user : {
           email: userData[0].email,
@@ -122,7 +124,7 @@ router.post("/add-listings" , upload.array('images', 5), async (req, res) => {
 }
 });
 
-router.get("/get-user-listings",async (req , res)=>{
+router.get("/get-user-listings",  authenticate , async (req , res)=>{
   console.log(req.cookies.session);
   const session = JSON.parse(req.cookies.session);
   const userId = session.userId;

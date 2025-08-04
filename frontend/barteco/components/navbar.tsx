@@ -15,7 +15,7 @@ export default async function Navbar() {
             </div>
             {
             session === null || session === undefined? 
-            <Link href="/sign-in"   >
+            <Link href="/sign-in"  prefetch={false} >
                 <button className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:border-transparent hover:bg-blue-600 hover:text-white active:bg-blue-700 transition">
                     Sign In
                 </button>

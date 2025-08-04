@@ -4,41 +4,17 @@ import { useRouter  } from "next/navigation";
 import { useAuth } from "@/context/useAuth";
 import Link from 'next/link';
 import { useActionState } from 'react';
-import { authenticate } from '@/lib/action';
-import { useSearchParams } from 'next/navigation';
+import { authenticate  } from '@/lib/action';
+import { redirect } from 'next/navigation';
 
 
 export default function Page() {
 
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('redirectTo') || '/dashboard/lister';
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined,
   );
-  //await createSession(); // Replace with actual user ID after authentication
 
-  
-  //const { replace } = useRouter();
-  //const { request , loading , error } = useAuth() ;
-
-  // This is a simple sign-up page component
-  /*async function handleSubmit(event : React.FormEvent<HTMLFormElement>){
-    event.preventDefault() ;
-
-    const email = event.currentTarget.email.value as string;
-    const password = event.currentTarget.password.value as string;
-
-    const res = await request('post', '/sign-in', { email, password });
-    if(res && res.status === 200){
-      console.log('Redirecting to dashboard...');
-      
-      //change to role based redirect
-      // For now, redirect to lister dashboard
-      replace('/dashboard/lister');
-    }
-
-  }*/
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -73,7 +49,7 @@ export default function Page() {
           </div>
 
           
-          <input type="hidden" name="redirectTo" value={callbackUrl} />
+          
           <button
             type="submit"
             className="btn btn-outline w-full"
@@ -81,6 +57,7 @@ export default function Page() {
           >
             Sign In
           </button>
+
           {errorMessage && (
             <p className="text-red-500 text-sm mt-2 text-center">
               {errorMessage}

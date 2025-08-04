@@ -2,13 +2,31 @@ import type { NextAuthConfig } from 'next-auth';
  
 //using v5 beta version of next-auth due to app router
 
+
 export const authConfig = {
   pages: {
-    signIn: '/login',
+    signIn: '/sign-in',
   },
   callbacks: {
+    async jwt({ token, user }) {
+  if (user) {
+    token.id = (user as any).id;
+    token.email = (user as any).email;
+    token.role = (user as any).role;
+  }
+  return token;
+}
+,
+ async session({ session, token }) {
+    // Attach custom fields from token to session
+    if (session.user) {
+      session.user.id = (token as any).id;
+      (session.user as any).role = (token as any).role ;
+    }
+    return session;
+  },
     authorized({ auth, request: { nextUrl } }) {
-      console.log(auth) ;
+      console.log('auth config',auth) ;
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
       if (isOnDashboard) {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react' ;
-export default function DisplayImg({imgs} : {imgs:any}){
+export default function DisplayImg({imgs} : {imgs:string[]}){
     const [displayAll , setDisplayAll] = useState(false) ;
     const [close , setClose] = useState(false) ;
     const [activeIndex, setActiveIndex] = useState<number>(0) ;

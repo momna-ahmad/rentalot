@@ -1,7 +1,7 @@
 
 import './styles.css';
 import Link from 'next/link';
-import Listings from '../../../../components/listings';
+import UserListings from '../../../../components/user-listings';
 import { Suspense } from 'react';
 import Loading from './loading' ;
 
@@ -20,7 +20,7 @@ export default function Page() {
     </Link>
     {/* Any content wrapped in a <Suspense> boundary will be streamed */}
     <Suspense fallback={<Loading/>}>
-      <Listings />
+      <UserListings />
     </Suspense>
 
     </>
