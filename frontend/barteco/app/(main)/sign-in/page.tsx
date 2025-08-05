@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useActionState } from 'react';
 import { authenticate  } from '@/lib/action';
 import { redirect } from 'next/navigation';
+import GoogleSignIn from "./google-signIn";
 
 
 export default function Page() {
@@ -76,6 +77,7 @@ export default function Page() {
           </Link>
 
         </form>
+        <GoogleSignIn />
       </div>
     </div>
   );

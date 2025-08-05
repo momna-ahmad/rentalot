@@ -7,6 +7,7 @@ import { AuthError  } from 'next-auth';
 import { cookies } from 'next/headers';
 import { signOut } from '@/auth';
 
+
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData,
@@ -33,4 +34,8 @@ export async function signout(){
   return await signOut({ redirectTo: '/' });
 }
 
-
+export async function handleSupabaseLogin(formData: FormData){
+  const token = formData.get('token') as string
+  console.log('action function' , token) ;
+  await signIn('credentials', {token});
+}

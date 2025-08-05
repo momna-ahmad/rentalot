@@ -74,8 +74,9 @@ router.post('/sign-in',  async (req, res) => {
           email: userData[0].email,
           role: userData[0].role,
           id: userData[0].id,
+          token: authData.session ,
         },
-        token: authData.session ,
+        
         
       })
     }
@@ -124,7 +125,7 @@ router.post("/add-listings" , upload.array('images', 5), async (req, res) => {
 }
 });
 
-router.get("/get-user-listings",  authenticate , async (req , res)=>{
+router.get("/get-user-listings", async (req , res)=>{
   console.log(req.cookies.session);
   const session = JSON.parse(req.cookies.session);
   const userId = session.userId;
@@ -164,6 +165,48 @@ router.post("/edit-listing/:id",async (req , res)=>{
   if(error)
     return res.send(error) ;
   res.send('success') ;
+
+});
+
+router.post('/google-sign-in' , async(req , res)=>{
+  const {token} = req.body ;
+    const { data: userInfo, error } = await supabase.auth.getUser(token);
+      if (error || !userInfo?.user) return null;
+
+      const {data : userData , error : userError } = await supabase.from('users').select('*').eq('email',userInfo.email).limit(1) ;
+      if(userError)
+          console.log(userError)
+      if(userData?.length>0)
+      {
+        console.log(userData) ;
+        return res.status(200).json({
+        user : {
+          email: userData[0].email,
+          role: userData[0].role,
+          id: userData[0].id,
+          token: authData.session ,
+        },
+        
+      })
+      }
+      else{
+        //insert user in database
+        const{data : user , error : err} = await supabase.from('users').insert({
+           email: userInfo.user.email , user_uid: userInfo.user.id 
+        }).select() ;
+        if(err)
+          console.log(err)
+        console.log(user) ;
+        res.status(200).json({
+        user : {
+          email: user.email,
+          role: user.role,
+          id: user.id,
+          token,
+        }, 
+        
+      })
+      };
 
 });
 
