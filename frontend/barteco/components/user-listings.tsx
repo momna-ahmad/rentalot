@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+
 import Link from 'next/link';
 import DisplayImg from './display-images';
 import { auth } from '@/auth';
@@ -7,13 +7,11 @@ export default async function UserListings(){
     const session = await auth();
     console.log('session from auth ' ,session?.user) ; 
 
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('session');
-    console.log(sessionCookie);
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-listings`, {
         headers: {
             'Content-Type': 'application/json',
-            'Cookie': `session=${sessionCookie?.value}`
+            Authorization: `Bearer ${(session?.user as any).token}` ,
           },
           
     });

@@ -18,10 +18,11 @@ export default function Page() {
       Add to your listings
     </div>
     </Link>
-    {/* Any content wrapped in a <Suspense> boundary will be streamed */}
+    {/* Any content wrapped in a <Suspense> boundary will be streamed  */}
     <Suspense fallback={<Loading/>}>
       <UserListings />
     </Suspense>
+    
 
     </>
     

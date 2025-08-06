@@ -4,7 +4,7 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
-import { createSession } from '@/lib/session'
+
 
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -20,7 +20,7 @@ export const { auth, signIn, signOut } = NextAuth({
       const { email, password, token } = credentials || {};
       if(token && !email && !password)
       {
-        console.log('auth .ts google ' , token);
+
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/google-sign-in`,{
           method: 'post' ,
           headers: {
@@ -36,8 +36,6 @@ export const { auth, signIn, signOut } = NextAuth({
       else
       {
         const { user  } = await res.json();
-        console.log('User signed in successfully created session in auth.ts' , user);
-        //stored in auth for sessions
         return user;
       }
       
@@ -57,10 +55,9 @@ export const { auth, signIn, signOut } = NextAuth({
         return null;
       else
       {
-        const { user , token } = await res.json();
+        const { user  } = await res.json();
         const userId = user.id; 
-        await createSession(userId, token);
-        console.log('User signed in successfully created session in auth.ts' , user);
+        
         //stored in auth for sessions
         return user;
       }

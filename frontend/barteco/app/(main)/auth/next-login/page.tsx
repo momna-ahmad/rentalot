@@ -3,11 +3,11 @@
 import { useEffect , useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { handleSupabaseLogin } from '@/lib/action'
+
+
 
 export default function NextLogin() {
-   const formRef = useRef<HTMLFormElement>(null) ;
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     const supabase = createBrowserClient(
@@ -27,14 +27,24 @@ export default function NextLogin() {
       if (access_token && refresh_token) {
         await supabase.auth.setSession({ access_token, refresh_token })
 
-        // Populate form input and submit
-        const input = document.createElement('input')
-        input.type = 'hidden'
-        input.name = 'token'
-        input.value = access_token
-        formRef.current?.appendChild(input)
+        // ✅ Call your route handler 
+        const res =
+         await fetch('/api', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: access_token }),
+        })
 
-        formRef.current?.requestSubmit();
+        if (res.ok) {
+            console.log('✅ Signed in successfully');
+            // 3. Redirect to dashboard or wherever you want
+            router.push('/dashboard/lister');
+          } else {
+            console.error('Failed to sign in via API route');
+          } 
+
     }
   }
 
@@ -46,7 +56,6 @@ export default function NextLogin() {
   
   return (
     <>
-    <form ref={formRef} action={handleSupabaseLogin} />
     <p>Logging you in...</p>
     </>
     

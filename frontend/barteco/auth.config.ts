@@ -13,6 +13,7 @@ export const authConfig = {
     token.id = (user as any).id;
     token.email = (user as any).email;
     token.role = (user as any).role;
+    token.token = (user as any).token ;
   }
   return token;
 }
@@ -22,11 +23,13 @@ export const authConfig = {
     if (session.user) {
       session.user.id = (token as any).id;
       (session.user as any).role = (token as any).role ;
+      (session.user as any).email = (token as any).email ;
+      (session.user as any).token = (token as any).token ;
     }
     return session;
   },
     authorized({ auth, request: { nextUrl } }) {
-      console.log('auth config',auth) ;
+      
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
       if (isOnDashboard) {

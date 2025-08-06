@@ -125,16 +125,18 @@ router.post("/add-listings" , upload.array('images', 5), async (req, res) => {
 }
 });
 
-router.get("/get-user-listings", async (req , res)=>{
-  console.log(req.cookies.session);
-  const session = JSON.parse(req.cookies.session);
-  const userId = session.userId;
+router.get("/get-user-listings", authenticate ,async (req , res)=>{
+  console.log(req.user) ;
+  const userId = req.user.sub;
   console.log(userId);
-  const {data , error} = await supabase.from('listings').select('*').eq('owner',userId) ;
-  console.log(data) ;
+  const {data , error} = await supabase.from('users').select('id').eq('user_uid',userId) ;
+  const{ data: listings , error : err} = await supabase.from('listings').select('*').eq('id' , data[0].id) ;
+  console.log(listings) ;
   if(error)
-    return res.send(error);
-  res.send(data) ;
+    return res.send(err);
+
+  if(data.length>0)
+    return res.send(listings) ;
 });
 
 router.get("/get-listing/:id",async (req , res)=>{
@@ -173,18 +175,20 @@ router.post('/google-sign-in' , async(req , res)=>{
     const { data: userInfo, error } = await supabase.auth.getUser(token);
       if (error || !userInfo?.user) return null;
 
-      const {data : userData , error : userError } = await supabase.from('users').select('*').eq('email',userInfo.email).limit(1) ;
+      console.log(userInfo.user.email) ;
+      const {data : userData , error : userError } = await supabase.from('users').select('*').eq('user_uid',userInfo.user.id).limit(1) ;
       if(userError)
           console.log(userError)
+      console.log('user data' , userData) ;
       if(userData?.length>0)
       {
-        console.log(userData) ;
+        console.log('inserted ' , userData , token) ;
         return res.status(200).json({
         user : {
           email: userData[0].email,
           role: userData[0].role,
           id: userData[0].id,
-          token: authData.session ,
+          token: token ,
         },
         
       })
@@ -202,11 +206,11 @@ router.post('/google-sign-in' , async(req , res)=>{
           email: user.email,
           role: user.role,
           id: user.id,
-          token,
+          token: token,
         }, 
         
-      })
-      };
+      });
+    }
 
 });
 

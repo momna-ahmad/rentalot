@@ -1,13 +1,15 @@
 
 import '@/app/(main)/globals.css';
-import { cookies } from 'next/headers';
+import {auth} from '@/auth' ;
 import Link from 'next/link';
 import {signout } from '@/lib/action' ;
 
 export default async function Navbar() {
-    const cookieStore = await cookies();
-    const session = cookieStore.get('session') ;
-    console.log('session' , session) ;
+    
+    const session = await auth();
+
+    console.log('User:', session?.user);
+
     return(
         <div className="flex items-center justify-between p-4 text-black">
             <div className="font-bold text-2xl">

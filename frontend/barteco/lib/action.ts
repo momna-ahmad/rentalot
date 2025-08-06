@@ -29,13 +29,6 @@ export async function authenticate(
 }
 
 export async function signout(){
-  const cookieStore = await cookies();
-  cookieStore.set('session', '', { path: '/', maxAge: 0 });
   return await signOut({ redirectTo: '/' });
 }
 
-export async function handleSupabaseLogin(formData: FormData){
-  const token = formData.get('token') as string
-  console.log('action function' , token) ;
-  await signIn('credentials', {token});
-}
