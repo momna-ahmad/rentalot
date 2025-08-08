@@ -5,10 +5,11 @@ import { auth } from '@/auth';
 
 export default async function UserListings(){
     const session = await auth();
-    console.log('session from auth ' ,session?.user) ; 
+    const id = session?.user?.id
+    console.log('session from auth ' ,id) ; 
 
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-listings`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-listings/${id}`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${(session?.user as any).token}` ,
@@ -16,7 +17,7 @@ export default async function UserListings(){
           
     });
     const listings = await res.json()  ;
-    
+    console.log(listings) ;
     return (
       
     <div className="max-w-4xl mx-auto p-4 space-y-6">

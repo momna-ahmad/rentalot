@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import { storage } from '../utils/cloudinary.js';
 import authenticate from '../middleware/authentication.js';
+import handleMulterErrors from '../middleware/multer.js';
 
 const router = express.Router();
 router.use(cookieParser());
@@ -74,7 +75,7 @@ router.post('/sign-in',  async (req, res) => {
           email: userData[0].email,
           role: userData[0].role,
           id: userData[0].id,
-          token: authData.session ,
+          token: authData.session.access_token ,
         },
         
         
@@ -83,59 +84,64 @@ router.post('/sign-in',  async (req, res) => {
  
 }) ;
 
-router.post("/add-listings" , upload.array('images', 5), async (req, res) => {
+router.post("/add-listings/:id", authenticate ,handleMulterErrors, async (req, res) => {
+  console.log('Adding listing...');
 
-  const session = JSON.parse(req.cookies.session);
-  const userId = session.userId;
-  let imageUrls ;
-  if(req.files.length>0)
-    imageUrls = req.files.map(file => file.path);
-  else
-    imageUrls = null ;
-   
-  const {
-    title,
-    description,
-    price,
-    category,
-    unit,
-  } = req.body ;
+  try {
+    const id = req.params.id;
 
-  console.log('DATA ' ,title, description , price , category , unit);
-  
-  if(!title || !description )
-    res.status(400).json({error : "fields required"}) ;
-  else{
-  const { data, error } = await supabase.from('listings').insert([
-    {
+    let imageUrls = null;
+    if (req.files && req.files.length > 0) {
+      imageUrls = req.files.map(file => file.path);
+    }
+
+    const {
       title,
       description,
       price,
       category,
       unit,
-      'owner' : userId,
-      img_urls : imageUrls,
+    } = req.body;
+
+    console.log('DATA:', title, description, price, category, unit);
+
+    if (!title || !description) {
+      return res.status(400).json({ error: "Title and description are required." });
     }
-  ]);
-  if (error) {
-    return res.status(400).json({ error: error.message });
-  }else{
-    res.status(200).json({ message: 'Listing added successfully'});
+
+    const { data, error } = await supabase.from('listings').insert([
+      {
+        title,
+        description,
+        price,
+        category,
+        unit,
+        owner: id,
+        img_urls: imageUrls,
+      }
+    ]);
+
+    if (error) {
+      console.error("Supabase insert error:", error.message);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json({ message: 'Listing added successfully' });
+
+  } catch (err) {
+    console.error("Unhandled error in /add-listings route:", err);
+    return res.status(500).json({ error: "An unexpected error occurred.", details: err.message });
   }
-}
 });
 
-router.get("/get-user-listings", authenticate ,async (req , res)=>{
-  console.log(req.user) ;
-  const userId = req.user.sub;
-  console.log(userId);
-  const {data , error} = await supabase.from('users').select('id').eq('user_uid',userId) ;
-  const{ data: listings , error : err} = await supabase.from('listings').select('*').eq('id' , data[0].id) ;
-  console.log(listings) ;
-  if(error)
-    return res.send(err);
 
-  if(data.length>0)
+router.get("/get-user-listings/:id", authenticate ,async (req , res)=>{
+  const id = req.params.id ;
+  const{ data: listings , error : err} = await supabase.from('listings').select('*').eq('owner' , id) ;
+  console.log(listings) ;
+  if(err)
+    return res.send(err);
+  if(listings.length>0)
     return res.send(listings) ;
 });
 

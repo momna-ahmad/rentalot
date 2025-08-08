@@ -1,6 +1,7 @@
 // app/api/supabase-signin/route.ts
 import { NextRequest } from 'next/server'
 import { signIn } from '@/auth'
+import { redirect } from 'next/navigation';
 
 export async function POST(req: NextRequest) {
     
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
     token
   })
 
-  console.log('route.ts');
 
-  return new Response(JSON.stringify({ success: true }), { status: 200 })
+
+  return redirect('/dashboard/lister') ;
 }

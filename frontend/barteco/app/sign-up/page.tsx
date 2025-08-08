@@ -2,6 +2,7 @@
 
 import { useRouter  } from "next/navigation";
 import useAxiosInstance  from "@/hooks/useAxios";
+import GoogleSignIn from "@/components/google-signIn";
 
 export default function Page() {
   
@@ -70,6 +71,7 @@ export default function Page() {
           }
 
         </form>
+        <GoogleSignIn />
       </div>
     </div>
   );

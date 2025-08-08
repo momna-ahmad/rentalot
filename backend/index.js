@@ -14,8 +14,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/add-listings', express.json({ limit: '10mb' }));
-app.use('/add-listings', express.urlencoded({ extended: true }));
 
 app.use(userRoutes);
 app.use(listingRoutes) ;

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useActionState } from 'react';
 import { authenticate  } from '@/lib/action';
 import { redirect } from 'next/navigation';
-import GoogleSignIn from "./google-signIn";
+import GoogleSignIn from "@/components/google-signIn";
 
 
 export default function Page() {

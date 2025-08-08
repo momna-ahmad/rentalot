@@ -1,4 +1,4 @@
-import "../formStyles.css"
+import "../(main)/formStyles.css"
 
 export const metadata = {
   title: 'Next.js',
@@ -12,7 +12,11 @@ export default function RootLayout({
 }) {
   return (
     <>
-    {children}
+    <html>
+      <body>
+        {children}
+      </body>
+    </html>
     </>   
   )
 }
