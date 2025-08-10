@@ -5,6 +5,7 @@ import multer from 'multer';
 import { storage } from '../utils/cloudinary.js';
 import authenticate from '../middleware/authentication.js';
 import handleMulterErrors from '../middleware/multer.js';
+import handleMulter from '../middleware/handle-multer.js';
 
 const router = express.Router();
 router.use(cookieParser());
@@ -101,13 +102,12 @@ router.post("/add-listings/:id", authenticate ,handleMulterErrors, async (req, r
       price,
       category,
       unit,
+      location
     } = req.body;
 
-    console.log('DATA:', title, description, price, category, unit);
+    console.log('DATA:', title, description, price, category, unit, location);
 
-    if (!title || !description) {
-      return res.status(400).json({ error: "Title and description are required." });
-    }
+
 
     const { data, error } = await supabase.from('listings').insert([
       {
@@ -117,6 +117,7 @@ router.post("/add-listings/:id", authenticate ,handleMulterErrors, async (req, r
         category,
         unit,
         owner: id,
+        location ,
         img_urls: imageUrls,
       }
     ]);
@@ -141,8 +142,8 @@ router.get("/get-user-listings/:id", authenticate ,async (req , res)=>{
   console.log(listings) ;
   if(err)
     return res.send(err);
-  if(listings.length>0)
-    return res.send(listings) ;
+  
+  return res.send(listings) ;
 });
 
 router.get("/get-listing/:id",async (req , res)=>{
@@ -220,6 +221,34 @@ router.post('/google-sign-in' , async(req , res)=>{
 
 });
 
+router.get('/get-user-profile' , authenticate , async( req , res)=>{
+  const uid = req.user.sub ;
+  console.log(uid , 'user uid') 
+  const { data : user , error} = await supabase.from('users').select('*').eq('user_uid',uid) ;
+  console.log('user in get profile ' , user) ;
+  return res.status(200).json(user[0]) ;
+});
 
+router.post('/edit-profile' , authenticate , handleMulter ,   async(req, res)=>{
+  console.log('edit profile') ;
+  const uid = req.user.sub ;
+  const image = req.file;
+  console.log('Uploaded Image:', image);
+  const {name , about , phone} = req.body ;
+  
+  const { data : user , error} = await supabase.from('users').update({
+      name,
+      about,
+      phone ,
+      profile: image ? image.path : null, // or URL if uploaded
+    })
+    .eq('user_uid',uid).select().single() ;
+    if(error)
+      return console.log(error);
+    console.log(user) ;
+  return res.status(200).json({
+    message : 'success'
+});
+});
 
 export default router;

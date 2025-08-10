@@ -39,28 +39,29 @@ export async function signout(){
 export async function handleSubmit(prevState:  any ,
   formData: FormData) {
   const session = await auth() ;
-  console.log(session) ;
   const id = session?.user?.id ;
-  console.log(id) ;
   
   const title = formData.get('title') as string ;
   const description = formData.get('description') as string
   const price = formData.get('price') as string
-  const unit = formData.get('unit') as string
-  const category = formData.get('category') as string
+  const unit = formData.get('unit') as string ;
+  const category = formData.get('category') as string ;
+  const location =  formData.get('location') as string ;
+
+
 const payload = new FormData();
 payload.append('title',  title);
 payload.append('description', description);
 payload.append('price',price );
 payload.append('unit', unit );
 payload.append('category', category);
+payload.append('location', location);
 
 const files = formData.getAll('images') as File[];
 // Append files
 files?.forEach((file) => {
   payload.append('images', file);
 });
-  
 
   //not using application json becz backend cant read files as json
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-listings/${id}`, {
@@ -73,16 +74,56 @@ files?.forEach((file) => {
   });
 
   if (!res.ok) {
-    console.log('error in action') ;
+    
     const {error} = await res.json(); // read error message
     return {
       error,
-      title, description, price, unit, category 
+      title, description, price, unit, category , location
     }
   }
 
   // Optional: handle response
   const result = await res.json();
-  console.log('Upload success:', result);
   return redirect('/dashboard/lister') ;
 }
+
+export async function editProfile(prevState:  any ,
+  formData: FormData) {
+  const session = await auth() ;
+  
+  const name = formData.get('name') as string ;
+  const about = formData.get('about') as string
+  const phone = formData.get('phone') as string;
+
+const payload = new FormData();
+payload.append('name',  name);
+payload.append('about', about);
+payload.append('phone', phone );
+
+
+const file = formData.get('image') as File;
+// Append files
+
+  payload.append('image', file);
+
+
+  //not using application json becz backend cant read files as json
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/edit-profile`, {
+    method: 'POST',
+    headers:{
+      Authorization: `Bearer ${(session?.user as any).token}` ,
+    },
+    body: payload
+  });
+
+  if (!res.ok) {
+    
+    const {error} = await res.json(); // read error message
+    return error ;
+  }
+
+  // Optional: handle response
+  const result = await res.json();
+  return redirect('/dashboard/lister/profile') ;
+}
+

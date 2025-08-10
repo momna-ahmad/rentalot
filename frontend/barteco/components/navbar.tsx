@@ -1,38 +1,42 @@
-
 import '@/app/(main)/globals.css';
-import {auth} from '@/auth' ;
+import { auth } from '@/auth';
 import Link from 'next/link';
-import {signout } from '@/lib/action' ;
+import { signout } from '@/lib/action';
+import Profile from './profile';
 
 export default async function Navbar() {
-    
-    const session = await auth();
+  const session = await auth();
+  console.log('User:', session?.user);
 
-    console.log('User:', session?.user);
+  return (
+    <div className="flex items-center justify-between px-6 py-4  ">
+      {/* Left side: Logo */}
+      <div className="font-bold text-2xl">
+        RentaLot.
+      </div>
 
-    return(
-        <div className="flex items-center justify-between p-4 text-black">
-            <div className="font-bold text-2xl">
-                RentaLot.
-            </div>
-            {
-            session?.user === null || session?.user === undefined ? 
-            <Link href="/sign-in"  prefetch={false} >
-                <button className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:border-transparent hover:bg-blue-600 hover:text-white active:bg-blue-700 transition">
-                    Sign In
-                </button>
-
-                
-            </Link> :
+      {/* Right side: Auth Buttons & Profile */}
+      {
+        session?.user == null ? (
+          <Link href="/sign-in" prefetch={false}>
+            <button className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:border-transparent hover:bg-blue-600 hover:text-white active:bg-blue-700 transition">
+              Sign In
+            </button>
+          </Link>
+        ) : (
+          <div className="flex items-center gap-4">
             <form action={signout}>
-          <button type="submit" className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:border-transparent hover:bg-blue-600 hover:text-white active:bg-blue-700 transition">
-            Log out
-          </button>
-        </form>
-
-            }
-            
-            
-        </div>
-    )
+              <button
+                type="submit"
+                className="border border-red-600 text-red-600 px-4 py-2 rounded-lg hover:border-transparent hover:bg-red-600 hover:text-white active:bg-red-700 transition"
+              >
+                Log out
+              </button>
+            </form>
+            <Profile />
+          </div>
+        )
+      }
+    </div>
+  );
 }

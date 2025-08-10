@@ -1,7 +1,9 @@
 'use client'
 import { useRouter } from "next/navigation";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { handleSubmit } from "@/lib/action";
+import SearchLocation from "@/components/search-location";
+import Testing from "@/components/testing";
 
 //for when image error returned by backend and form values need ot be restored
 const initialState = {
@@ -11,6 +13,7 @@ const initialState = {
   price : '',
   unit  : '',
   category : '' ,
+  location : '' ,
   error : null
 }
 
@@ -20,6 +23,9 @@ export default function Page() {
       handleSubmit,
       initialState,
     );
+
+
+
 
     return (
         <>
@@ -43,6 +49,7 @@ export default function Page() {
       className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
   </div>
+
 
   <div>
     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -111,6 +118,8 @@ export default function Page() {
           className="w-full"
         />
       </div>
+      
+      <SearchLocation location={state.location}/>
 
   <button
     type="submit"
