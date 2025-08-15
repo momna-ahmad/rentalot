@@ -2,16 +2,18 @@
 
 import { ReactNode, use } from 'react';
 import DisplayImg from "./display-images";
+import Link from 'next/link';
 
 interface Listing {
   title: string;
   img_urls: string[];
   price: number;
   unit: string;
+  owner: string
 }
 
-export default function Listings({ res, children }: { res: Promise<any>; children: ReactNode }) {
-  const listings: Listing[] | null = use(res).data;
+export default function Listings({ listings, children }: { listings: Listing[]; children?: ReactNode }) {
+  
   console.log(listings);
 
   return (
@@ -40,6 +42,9 @@ export default function Listings({ res, children }: { res: Promise<any>; childre
                 </p>
               </div>
             </div>
+            <Link href={`/dashboard/chat/${listing.owner}`}>
+            Chat with owner
+            </Link>
           </div>
         ))}
       </div>

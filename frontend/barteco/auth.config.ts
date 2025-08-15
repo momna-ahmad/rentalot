@@ -39,8 +39,10 @@ export const authConfig = {
           } ;
         return false; // Redirect unauthenticated users to login page
       } else if (isLoggedIn) {
-        console.log('ABOUT TO REDIRECT');
-        return Response.redirect(new URL('/dashboard/lister', nextUrl));
+        if(nextUrl.pathname === '/sign-in')
+          return Response.redirect(new URL('/dashboard/lister', nextUrl));
+        return true
+        
       }
       return true;
     },

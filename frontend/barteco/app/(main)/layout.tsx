@@ -61,24 +61,18 @@ if (session?.user != null) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <>
-        
-        {
-          session?.user != null && (
-            <ProfileProvider value={profile}>
+        {session?.user != null ?
+        <>
+        <ProfileProvider value={profile}>
           <Navbar/>
           {children}
         </ProfileProvider>
-        )
-        }
-
-        {
-          session === null && (
-            <div>
-              <Navbar/>
+        </>
+         :
+        <>
+        <Navbar/>
           {children}
-            </div>
-          
-          )
+        </>
         }
         </>
         

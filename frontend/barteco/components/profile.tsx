@@ -49,12 +49,7 @@ export default function Profile() {
           </svg>
         </div>
       )}
-
-      {profile.name && (
-        <span className="text-sm font-medium text-gray-800">
-          {profile.name}
-        </span>
-      )}
+      
     </div>
     </Link>
   );

@@ -9,15 +9,13 @@ interface PageProps{
 export default function Page({ params }: PageProps){
     const { category }=  params ;
     //generic route
-    const listings  = fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listings/${category}`)
+    /*const listings  = fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listings/${category}`)
     .then(data =>{
         return data.json() ;
-    })
+    })*/
     return (
         <>
-        <Listings res={listings}>
             <Categories/>
-        </Listings>
         </>
     )
 }

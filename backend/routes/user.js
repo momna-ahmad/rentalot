@@ -1,5 +1,5 @@
 import express from 'express';
-import supabase from './supabase-client.js';
+import supabase from '../utils/supabase-client.js';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import { storage } from '../utils/cloudinary.js';
@@ -17,7 +17,7 @@ router.post('/sign-up', async (req, res) => {
     .eq('email', email)
     .limit(1);
 
-    console.log('data' + data);
+    
     if(data?.length > 0){
         return res.status(400).json({ error: 'Email already exists' });
     }
@@ -69,8 +69,7 @@ router.post('/sign-in',  async (req, res) => {
     else{
       const { data: userData, error: userError } = await supabase.from('users').select('*')
       .eq('user_uid' , authData.user.id).limit(1) ;
-      console.log('userData' + userData[0].id);
-      console.log('session' , authData) ;
+      
       res.status(200).json({
         user : {
           email: userData[0].email,
@@ -105,10 +104,6 @@ router.post("/add-listings/:id", authenticate ,handleMulterErrors, async (req, r
       location
     } = req.body;
 
-    console.log('DATA:', title, description, price, category, unit, location);
-
-
-
     const { data, error } = await supabase.from('listings').insert([
       {
         title,
@@ -139,7 +134,7 @@ router.post("/add-listings/:id", authenticate ,handleMulterErrors, async (req, r
 router.get("/get-user-listings/:id", authenticate ,async (req , res)=>{
   const id = req.params.id ;
   const{ data: listings , error : err} = await supabase.from('listings').select('*').eq('owner' , id) ;
-  console.log(listings) ;
+  
   if(err)
     return res.send(err);
   
@@ -148,9 +143,9 @@ router.get("/get-user-listings/:id", authenticate ,async (req , res)=>{
 
 router.get("/get-listing/:id",async (req , res)=>{
   const id = req.params.id ;
-  console.log(id) ;
+  
   const {data , error} = await supabase.from('listings').select('*').eq('id',id).limit(1) ;
-  console.log(data[0]) ;
+  
   if(error)
     return res.send(error) ;
   res.send(data[0]) ;
@@ -159,7 +154,7 @@ router.get("/get-listing/:id",async (req , res)=>{
 
 router.get("/delete-listing/:id",async (req , res)=>{
   const id = req.params.id ;
-  console.log('delete route hit' , id ) ;
+  
   const {data , error} = await supabase.from('listings').delete().eq('id',id) ;
   if(error)
     return res.send(error) ;
@@ -182,14 +177,14 @@ router.post('/google-sign-in' , async(req , res)=>{
     const { data: userInfo, error } = await supabase.auth.getUser(token);
       if (error || !userInfo?.user) return null;
 
-      console.log(userInfo.user.email) ;
+      
       const {data : userData , error : userError } = await supabase.from('users').select('*').eq('user_uid',userInfo.user.id).limit(1) ;
       if(userError)
           console.log(userError)
-      console.log('user data' , userData) ;
+      
       if(userData?.length>0)
       {
-        console.log('inserted ' , userData , token) ;
+        
         return res.status(200).json({
         user : {
           email: userData[0].email,
@@ -207,7 +202,7 @@ router.post('/google-sign-in' , async(req , res)=>{
         }).select() ;
         if(err)
           console.log(err)
-        console.log(user) ;
+        
         res.status(200).json({
         user : {
           email: user.email,
@@ -222,10 +217,9 @@ router.post('/google-sign-in' , async(req , res)=>{
 });
 
 router.get('/get-user-profile' , authenticate , async( req , res)=>{
-  const uid = req.user.sub ;
-  console.log(uid , 'user uid') 
+  const uid = req.user.sub ; 
   const { data : user , error} = await supabase.from('users').select('*').eq('user_uid',uid) ;
-  console.log('user in get profile ' , user) ;
+  
   return res.status(200).json(user[0]) ;
 });
 

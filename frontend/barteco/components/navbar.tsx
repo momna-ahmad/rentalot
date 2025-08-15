@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import Link from 'next/link';
 import { signout } from '@/lib/action';
 import Profile from './profile';
+import SwitchProfiles from './switch-profiles';
 
 export default async function Navbar() {
   const session = await auth();
@@ -25,6 +26,7 @@ export default async function Navbar() {
           </Link>
         ) : (
           <div className="flex items-center gap-4">
+            <SwitchProfiles />
             <form action={signout}>
               <button
                 type="submit"

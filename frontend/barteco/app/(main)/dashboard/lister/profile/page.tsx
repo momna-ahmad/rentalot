@@ -40,7 +40,7 @@ export default function Profile() {
           type="file"
           name='image'
           accept="image/*"
-          defaultValue={profile?.profile}
+          
           className="text-sm text-gray-600"
         />
       </div>

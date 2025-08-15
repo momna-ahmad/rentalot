@@ -17,7 +17,8 @@ export async function authenticate(
 ) {
   
   try {
-    await signIn('credentials', formData);
+     const result = await signIn('credentials', formData);
+    
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -29,6 +30,7 @@ export async function authenticate(
     }
     throw error;
   }
+
   
 }
 

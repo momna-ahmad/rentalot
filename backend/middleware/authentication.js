@@ -4,7 +4,7 @@ const SUPABASE_JWT_SECRET = process.env.SUPABASE_JWT_SECRET;
 export default function authenticate(req, res, next) {
     
   try {
-    console.log(req.headers.authorization);
+    
     const authHeader = req.headers.authorization;
     
     const token = authHeader.split(' ')[1]; // Get the token part
