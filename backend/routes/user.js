@@ -69,6 +69,14 @@ router.post('/sign-in',  async (req, res) => {
     else{
       const { data: userData, error: userError } = await supabase.from('users').select('*')
       .eq('user_uid' , authData.user.id).limit(1) ;
+
+      res.cookie('token' , authData.session.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      }
+      );
       
       res.status(200).json({
         user : {
@@ -202,6 +210,14 @@ router.post('/google-sign-in' , async(req , res)=>{
         }).select() ;
         if(err)
           console.log(err)
+
+        res.cookie('token' , authData.session.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      }
+      );
         
         res.status(200).json({
         user : {
@@ -244,5 +260,10 @@ router.post('/edit-profile' , authenticate , handleMulter ,   async(req, res)=>{
     message : 'success'
 });
 });
+
+router.get('/logout' , (req , res)=>{
+  res.clearCookie('token') ;
+  return res.status(200).json({message : 'success'}) ;
+}) ;
 
 export default router;

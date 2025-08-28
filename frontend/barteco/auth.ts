@@ -56,7 +56,6 @@ export const { auth, signIn, signOut } = NextAuth({
       else
       {
         const { user  } = await res.json();
-        const userId = user.id; 
         
         //stored in auth for sessions
         return user;

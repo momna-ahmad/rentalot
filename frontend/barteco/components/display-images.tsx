@@ -1,74 +1,67 @@
 'use client'
 
-import { useState } from 'react' ;
-export default function DisplayImg({imgs} : {imgs:string[]}){
-    const [displayAll , setDisplayAll] = useState(false) ;
-    const [close , setClose] = useState(false) ;
-    const [activeIndex, setActiveIndex] = useState<number>(0) ;
+import { useState } from 'react';
 
-    return (
+export default function DisplayImg({ imgs }: {imgs : string[]}) {
+  const [displayAll, setDisplayAll] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+
+  const nextImage = () => {
+    setActiveIndex((prev) => (prev + 1) % imgs.length);
+  };
+
+  const prevImage = () => {
+    setActiveIndex((prev) => (prev - 1 + imgs.length) % imgs.length);
+  };
+
+  return (
     <>
-    {
-        displayAll? (
-            <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center flex-col">
+      {displayAll ? (
+        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+          {/* Close button */}
+          <button
+            onClick={() => setDisplayAll(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-3xl font-bold"
+          >
+            ✕
+          </button>
 
-                <button onClick={()=>{
-                    if(activeIndex+1 === imgs.length)
-                        setActiveIndex(0) ;
-                    else
-                        setActiveIndex(activeIndex+1) ;
-                }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                    </svg>
-                </button>
-                
+          {/* Left button */}
+          <button
+            onClick={prevImage}
+            className="absolute left-4 text-white hover:text-gray-300 text-5xl"
+          >
+            ❮
+          </button>
 
-            {
+          {/* Main Image */}
+          <img
+            key={activeIndex}
+            src={imgs[activeIndex]}
+            alt={`Listing Image ${activeIndex + 1}`}
+            className="max-h-[80vh] max-w-[80vw] object-contain rounded-lg shadow-lg"
+          />
 
-            <img
-              key={activeIndex}
-              src={imgs[activeIndex]}
-              alt={`Listing Image ${activeIndex + 1}`}
-              className="w-32 h-32 object-cover rounded-md border"
-            />
-
-            }
-            <button onClick={()=>{
-                    if(activeIndex-1 < 0)
-                        setActiveIndex(imgs.length-1) ;
-                    else
-                        setActiveIndex(activeIndex-1) ;
-                }}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-            </button>
-            
-
+          {/* Right button */}
+          <button
+            onClick={nextImage}
+            className="absolute right-4 text-white hover:text-gray-300 text-5xl"
+          >
+            ❯
+          </button>
         </div>
-        )
-         :
-        
-        (
-            
-                <div>
-            <button onClick={()=>{
-                setDisplayAll(true) ;
-            }}>
-                <img
+      ) : (
+        <div>
+          <button onClick={() => setDisplayAll(true)}>
+            <img
               key={0}
               src={imgs[0]}
               alt={`Listing Image 1`}
-              className="w-32 h-32 object-cover rounded-md border"
+              className="w-32 h-32 object-cover rounded-md border cursor-pointer"
             />
-            </button>
-            
+          </button>
         </div>
-            
-        )
-    }
+      )}
     </>
-    );
-
+  );
 }

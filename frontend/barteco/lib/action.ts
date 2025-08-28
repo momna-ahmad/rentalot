@@ -35,6 +35,11 @@ export async function authenticate(
 }
 
 export async function signout(){
+  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
+    headers:{
+      withCredentials: 'include'
+    }
+  });
   return await signOut({ redirectTo: '/' });
 }
 

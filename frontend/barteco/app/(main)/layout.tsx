@@ -46,7 +46,6 @@ if (session?.user != null) {
     }
 
     profile = await res.json();
-    console.log('profile' , profile) ;
   } catch (err) {
     console.error('Error fetching profile:', err);
     // profile remains null
