@@ -69,21 +69,14 @@ router.post('/sign-in',  async (req, res) => {
     else{
       const { data: userData, error: userError } = await supabase.from('users').select('*')
       .eq('user_uid' , authData.user.id).limit(1) ;
-
-      res.cookie('token' , authData.session.access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      }
-      );
+      let token = authData.session.access_token ;
       
       res.status(200).json({
         user : {
           email: userData[0].email,
           role: userData[0].role,
           id: userData[0].id,
-          token: authData.session.access_token ,
+          token ,
         },
         
         
@@ -211,13 +204,6 @@ router.post('/google-sign-in' , async(req , res)=>{
         if(err)
           console.log(err)
 
-        res.cookie('token' , authData.session.access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      }
-      );
         
         res.status(200).json({
         user : {

@@ -1,8 +1,11 @@
 
 import Categories from "@/components/categories";
+import { cookies } from "next/headers";
 
-
-export default function Page() {
+export default async function Page() {
+  const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    console.log("Token stored in cookies frontend", token);
   return (
     <>
     

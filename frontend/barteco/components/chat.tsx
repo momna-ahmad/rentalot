@@ -2,17 +2,13 @@
 
 import { useEffect, useState, useRef, use } from "react";
 import { io, Socket } from "socket.io-client";
-import { useChat } from "@/context/useChatContext";
+import { useChat , ChatMessage } from "@/context/useChatContext";
 
-type ChatMessage = {
-  sent: boolean;
-  message: string;
-};
 
 export default function Chat({ current }: { current: string | undefined }) {
-  const { selectedChat } = useChat();
+  const { selectedChat , messages  } = useChat();
   const [message, setMessage] = useState("");
-  const [chat, setChat] = useState<ChatMessage[]>([]);
+  const [chat, setChat] = useState<ChatMessage[]>(messages);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -32,9 +28,13 @@ export default function Chat({ current }: { current: string | undefined }) {
   }, []);
 
   useEffect(() => {
+    setChat(messages) ;
+}, [messages]);
+
+  useEffect(() => {
     if (selectedChat && socketRef.current) {
       socketRef.current.on("receive_private_message", ({ message }) => {
-        setChat((prev) => [...prev, { sent: false , message }]);
+        setChat((prev) => [...prev, { sent: false , content : message }]);
       });
 
       return () => {
@@ -51,20 +51,21 @@ export default function Chat({ current }: { current: string | undefined }) {
       message,
       to: selectedChat?.id,
     });
-
     //save message to backend
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        message,
+        message : message,
         sender : current,
-        user1: current,
         user2: selectedChat?.id,
         chat : selectedChat?.inbox
       })
     });
 
-    setChat((prev) => [...prev, { sent: true , message }]);
+    setChat((prev) => [...prev, { sent: true , content : message }]);
     setMessage("");
   };
 
@@ -91,7 +92,7 @@ export default function Chat({ current }: { current: string | undefined }) {
           {selectedChat?.name}
         </h2>
       </div>
-
+      
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-3 bg-gray-50">
   {chat.map((msg, idx) => (
@@ -106,7 +107,7 @@ export default function Chat({ current }: { current: string | undefined }) {
             : "bg-gray-200 text-gray-800 rounded-bl-none"
         }`}
       >
-        <p>{msg.message}</p>
+        <h1>{msg.content}</h1>
       </div>
     </div>
   ))}

@@ -1,19 +1,11 @@
-
+//need two axios instances one for server components and one for client components
 import axios from "axios";
 
+//only accessible in server components
+
 const api = axios.create({
-  baseURL: "http://localhost:5000",
-  withCredentials: true // Important for sending cookies
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
 });
 
-/*api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});*/
-
-
 export default api;
-

@@ -14,7 +14,6 @@ export default async function Listing({ params }: PageProps) {
     headers: {
       'Content-Type': 'application/json',
     },
-    // Optional: add cache policy
     cache: 'no-store',
   });
 
@@ -22,33 +21,50 @@ export default async function Listing({ params }: PageProps) {
   console.log('listing ', listing);
 
   return (
-    <main className="min-h-screen bg-gray-100 py-10 px-4 md:px-10">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">{listing.title}</h1>
-        
-        <p className="text-gray-600 text-lg mb-6">{listing.description}</p>
+    <main className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10 md:px-20">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 md:p-12">
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-6 leading-tight">
+          {listing.title}
+        </h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <p className="text-gray-700 text-lg mb-8 leading-relaxed">
+          {listing.description}
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-10">
           <div>
-            <span className="block text-sm text-gray-500">Price</span>
-            <span className="text-xl font-semibold text-gray-700">${listing.price}</span>
+            <span className="block text-sm font-medium text-gray-500 mb-1">
+              Price
+            </span>
+            <span className="text-2xl font-semibold text-gray-800">
+              ${listing.price}
+            </span>
           </div>
 
           <div>
-            <span className="block text-sm text-gray-500">Unit</span>
-            <span className="text-xl font-semibold text-gray-700">{listing.unit}</span>
+            <span className="block text-sm font-medium text-gray-500 mb-1">
+              Unit
+            </span>
+            <span className="text-2xl font-semibold text-gray-800">
+              {listing.unit}
+            </span>
           </div>
 
           <div>
-            <span className="block text-sm text-gray-500">Category</span>
-            <span className="text-xl font-semibold text-gray-700 capitalize">{listing.category}</span>
+            <span className="block text-sm font-medium text-gray-500 mb-1">
+              Category
+            </span>
+            <span className="text-2xl font-semibold text-gray-800 capitalize">
+              {listing.category}
+            </span>
           </div>
-
         </div>
 
         {/* Image Preview */}
         {listing.img_urls?.length > 0 && (
-          <DisplayImg imgs={listing.img_urls} />
+          <div className="mb-10 rounded-lg overflow-hidden shadow-md">
+            <DisplayImg imgs={listing.img_urls} />
+          </div>
         )}
 
         <ListingProvider value={listing}>

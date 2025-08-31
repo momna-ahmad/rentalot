@@ -1,13 +1,12 @@
 'use client';
 
 import { useRouter  } from "next/navigation";
-import useAxiosInstance  from "@/hooks/useAxios";
+import api from "@/hooks/axiosInstance";
 import GoogleSignIn from "@/components/google-signIn";
 
 export default function Page() {
   
   const { replace } = useRouter();
-  const { request , loading , error } = useAxiosInstance() ;
 
   // This is a simple sign-up page component
   async function handleSubmit(event : React.FormEvent<HTMLFormElement>){
@@ -16,7 +15,7 @@ export default function Page() {
     const email = event.currentTarget.email.value as string;
     const password = event.currentTarget.password.value as string;
 
-    const res = await request('post', '/sign-up', { email, password });
+    const res = await api.post('/sign-up', { email, password });
     if(res && res.status === 200){
       console.log('Redirecting to dashboard...');
       replace('/sign-in');
@@ -55,20 +54,15 @@ export default function Page() {
             />
           </div>
 
-          <span>
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}  
-          </span>
+
 
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition"
-            disabled={loading}
+            
           >
             Sign Up
           </button>
-          {
-            loading && <p className="text-blue-500 text-sm mt-2">Loading...</p>
-          }
 
         </form>
         <GoogleSignIn />

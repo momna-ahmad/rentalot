@@ -1,25 +1,26 @@
 import express from 'express' ;
 import supabase from '../utils/supabase-client.js';
 import authenticate from '../middleware/authentication.js';
+import fetchUser from '../utils/fetchuser.js';
 
 const router = express.Router() ;
 
 router.post('/message' , async(req , res)=>{
-    let {message , current,  user , user2  } = req.body ;
+    let {message , sender , user2  } = req.body ;
     let {chat} = req.body ;
     
-    console.log(message , user , user2 , chat) ;
+    console.log(message , sender , user2 , chat) ;
     //check if users have a chat room
     if(!chat)
     {
-        const { data : chatData , error} = await supabase.from('chats').insert({user_id : user , user2_id : user2}).select().single() ;
+        const { data : chatData , error} = await supabase.from('chats').insert({user_id : sender , user2_id : user2}).select().single() ;
         if(error)
             console.log(error) ;
         console.log(chatData);
         chat = chatData.id ;
     }
     //insert message in chat room
-    const {data ,error } = await supabase.from('messages').insert({content: message , chat , sender: current}) ;
+    const {data ,error } = await supabase.from('messages').insert({content: message , chat , sender}) ;
     if(error){
         console.log(error)
         return res.send(error)
@@ -78,13 +79,24 @@ router.get('/inbox', authenticate, async (req, res) => {
   return res.status(200).json(inbox);
 });
 
-router.get('/messages/:chatId' , authenticate, async (req, res) => {
+//modify to accept token and send messages in form of message and sent field with true or false (whether current user sent or received said message)
+router.get('/messages/:chatId' , authenticate , async (req, res) => {
   const { chatId } = req.params ;
+  const user = await fetchUser(req.user.sub) ;
+  console.log(user) ;
   const { data , error} = await supabase.from('messages').select('*').eq('chat' , chatId).order('created_at', { ascending: true }) ;
   if(error)
     return res.status(400).json({error: error.message}) ;
-  
-  return res.status(200).json(data) ;
+  let messages = 
+  data.map((message)=>{
+    const sent = user === message.sender? true : false ;
+    const content = message.content ;
+    return {
+      sent,
+      content
+    }
+  }) ;
+  return res.status(200).json(messages) ;
 });
 
 export default router ;

@@ -74,7 +74,6 @@ if (session?.user != null) {
         </>
         }
         </>
-        
       </body>
     </html>
   );

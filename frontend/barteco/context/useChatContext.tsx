@@ -7,9 +7,9 @@ interface Chat {
   inbox?: string; // inbox id for when user is chatting for the first time
 }
 
-type ChatMessage = {
+export type ChatMessage = {
   sent: boolean;
-  message: string;
+  content: string;
 };
 
 interface ChatContextType {
@@ -21,7 +21,7 @@ interface ChatContextType {
   clearMessages: () => void;
 }
 
-const ChatContext = createContext<ChatContextType | undefined>(undefined);
+export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export default function ChatProvider({ children }: { children: ReactNode }) {
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);

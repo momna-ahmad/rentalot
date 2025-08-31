@@ -3,10 +3,13 @@
 import { use } from "react";
 import { useChat } from "@/context/useChatContext";
 import api from "@/hooks/axiosInstance";
+import { useSession } from "next-auth/react";
 
 export default function InboxUsers({ inbox }: { inbox: Promise<any[]> }) {
   const inboxData = use(inbox);
   const { selectedChat, setSelectedChat , messages , setMessages  } = useChat();
+  const { data: session } = useSession();
+  console.log('session data in client' , session?.user)
 
   const handleInboxChange = (inbox: any) => async() => { 
     setSelectedChat({
@@ -16,7 +19,13 @@ export default function InboxUsers({ inbox }: { inbox: Promise<any[]> }) {
     });
 
     //fetch previous messages
-    const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/messages/${inbox.id}`);
+    const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/messages/${inbox.id}` , 
+      {
+        headers : {
+          Authorization: `Bearer ${(session?.user as any).token}`,
+        }
+      }
+    );
     console.log("previous messages", res.data) ;
     setMessages(res.data) ;
   };
