@@ -8,36 +8,38 @@ interface PageProps {
 
 export default async function Listing({ params }: PageProps) {
   const { id } = params;
-  console.log(id);
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listing/${id}`, {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    cache: 'no-store',
+    cache: "no-store",
   });
 
   const listing = await res.json();
-  console.log('listing ', listing);
+  console.log('listing' ,listing);
 
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10 md:px-20">
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 md:p-12">
+        {/* Title */}
         <h1 className="text-4xl font-extrabold text-gray-900 mb-6 leading-tight">
           {listing.title}
         </h1>
 
+        {/* Description */}
         <p className="text-gray-700 text-lg mb-8 leading-relaxed">
           {listing.description}
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-10">
+        {/* Key Details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
           <div>
             <span className="block text-sm font-medium text-gray-500 mb-1">
               Price
             </span>
             <span className="text-2xl font-semibold text-gray-800">
-              ${listing.price}
+              PKR {listing.price}
             </span>
           </div>
 
@@ -58,6 +60,24 @@ export default async function Listing({ params }: PageProps) {
               {listing.category}
             </span>
           </div>
+
+          <div>
+            <span className="block text-sm font-medium text-gray-500 mb-1">
+              Location
+            </span>
+            {
+              listing.location? (
+                <span className="text-2xl font-semibold text-gray-800 capitalize">
+              {listing.location}
+            </span>
+              ):
+              <span className="text-2xl font-semibold text-gray-800 capitalize">
+              Not provided
+            </span>
+              
+            }
+            
+          </div>
         </div>
 
         {/* Image Preview */}
@@ -67,6 +87,7 @@ export default async function Listing({ params }: PageProps) {
           </div>
         )}
 
+        {/* Actions */}
         <ListingProvider value={listing}>
           <ActionsOnListings />
         </ListingProvider>

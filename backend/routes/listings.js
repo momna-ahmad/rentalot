@@ -24,4 +24,17 @@ router.get('/get-listings/:category' , async(req, res)=>{
     })
 })
 
+router.get('/listing-detail/:id' , async(req, res)=>{
+    const {id} = req.params ;
+    const {data:listing , error} = await supabase.from('listings').select('*').eq('id',id).single();
+    if(error)
+    {
+        console.log(error) ;
+        return res.status(404).json({message : error}) ;
+    }
+        
+    console.log(listing) ;
+    return res.status(200).json({listing}) ;
+})
+
 export default router ;

@@ -6,6 +6,7 @@ import Listings from './listings';
 import { list } from 'postcss';
 
 interface Listing {
+  id : string,
   title: string;
   img_urls: string[];
   price: number;

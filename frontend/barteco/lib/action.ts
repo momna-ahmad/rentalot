@@ -7,9 +7,6 @@ import { AuthError  } from 'next-auth';
 import { signOut } from '@/auth';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
-import { useRouter } from 'next/navigation';
-
 
 export async function authenticate(
   prevState: string | undefined,
@@ -110,8 +107,10 @@ payload.append('phone', phone );
 
 const file = formData.get('image') as File;
 // Append files
-
+//to allow for no profile pic
+  if (file && file.size > 0) {
   payload.append('image', file);
+}
 
 
   //not using application json becz backend cant read files as json

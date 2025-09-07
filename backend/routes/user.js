@@ -252,4 +252,11 @@ router.get('/logout' , (req , res)=>{
   return res.status(200).json({message : 'success'}) ;
 }) ;
 
+//fetch profile for customer
+router.get('/get-profile/:id' , async( req , res)=>{
+  const {id} = req.params ; 
+  const { data : profile , error} = await supabase.from('users').select('*').eq('id',id).single() ;
+  return res.status(200).json({profile}) ;
+});
+
 export default router;

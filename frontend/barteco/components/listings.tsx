@@ -5,6 +5,7 @@ import DisplayImg from "./display-images";
 import Link from 'next/link';
 
 interface Listing {
+  id : string
   title: string;
   img_urls: string[];
   price: number;
@@ -33,7 +34,7 @@ export default function Listings({ listings, children }: { listings: Listing[]; 
             {listing.img_urls?.length > 0 && (
               <DisplayImg imgs={listing.img_urls} />
             )}
-
+            <Link href={`/detail/${listing.id}`}>
             <div className="p-4 flex flex-col flex-grow">
               <h2 className="text-lg font-semibold mb-2">{listing.title}</h2>
               <div className="mt-auto">
@@ -42,10 +43,12 @@ export default function Listings({ listings, children }: { listings: Listing[]; 
                 </p>
               </div>
             </div>
+            </Link>
             <Link href={`/dashboard/chat/${listing.owner}`}>
             Chat with owner
             </Link>
           </div>
+          
         ))}
       </div>
     </div>
