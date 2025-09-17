@@ -7,6 +7,8 @@ import { AuthError  } from 'next-auth';
 import { signOut } from '@/auth';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import api from '@/hooks/axiosInstance';
+import { headers } from 'next/headers';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -114,7 +116,7 @@ const file = formData.get('image') as File;
 
 
   //not using application json becz backend cant read files as json
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/edit-profile`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/book-listing`, {
     method: 'POST',
     headers:{
       Authorization: `Bearer ${(session?.user as any).token}` ,
@@ -133,3 +135,52 @@ const file = formData.get('image') as File;
   return redirect('/dashboard/lister/profile') ;
 }
 
+export async function handleBooking(prevState: any, formData: FormData) {
+  console.log('server action for booking');
+
+  const session = await auth();
+  const listing = formData.get('listing')?.toString();
+  const duration = formData.get('duration')?.toString();
+  const start_date_time = formData.get('start')?.toString();
+  const unit = formData.get('unit')?.toString();
+  const cost = formData.get('cost')?.toString();
+
+  console.log(duration, start_date_time, unit, cost);
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/book-listing`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${(session?.user as any).token}`,
+      },
+      body: JSON.stringify({
+        listing,
+        duration: Number(duration),
+        start: start_date_time,
+        unit,
+        cost,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      return {
+        ...prevState,
+        error: errorData.error?.message || 'Failed to book listing',
+      };
+    }
+
+    // Success
+    return {
+      ...prevState,
+      error: null,
+    };
+  } catch (err) {
+    console.error('Booking failed:', err);
+    return {
+      ...prevState,
+      error: 'Something went wrong. Please try again.',
+    };
+  }
+}

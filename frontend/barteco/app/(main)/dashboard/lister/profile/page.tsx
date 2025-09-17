@@ -1,90 +1,32 @@
-'use client';
+import ProfileForm from "@/components/profile-form";
+import MyBookings from "@/components/my-bookings";
+import { auth } from "@/auth";
 
-import { useContext, useActionState } from 'react';
-import { ProfileContext } from '@/context/useProfileContext';
-import Image from 'next/image';
-import { editProfile } from '@/lib/action';
+export default async function Profile() {
+  // fetch user bookings 
+  const session = await auth();
+  console.log("session", session);
 
-export default function Profile() {
-  const profile = useContext(ProfileContext);
-
-  const [error , formAction, isPending] = useActionState(
-        editProfile,
-        null
-      );
+  const res = fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-bookings`, {
+    headers: {
+      Authorization: `Bearer ${(session?.user as any).token}`,
+    },
+  }).then((res) => res.json());
 
   return (
-    <form
-      action={formAction}
-      className="w-full max-w-2xl mx-auto p-8 bg-white rounded-xl shadow space-y-6"
-    >
-        {error && (
-        <div className="text-red-600 bg-red-100 px-4 py-2 rounded">
-          {error}
-        </div>
-      )}
+    <div className="min-h-screen p-6 bg-gray-50">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8">
+        {/* Profile Form */}
+        <section className="md:w-1/3 bg-white rounded-lg shadow p-6">
+          <h1 className="text-3xl font-bold mb-6">My Profile</h1>
+          <ProfileForm />
+        </section>
 
-      {/* Profile Image */}
-      <div className="flex flex-col items-center space-y-2">
-        <div className="w-28 h-28 rounded-full overflow-hidden border border-gray-300">
-          <Image
-            src={profile?.profile || '/default-avatar.svg'}
-            alt="Profile"
-            width={112}
-            height={112}
-            className="object-cover w-full h-full"
-          />
-        </div>
-
-        <input
-          type="file"
-          name='image'
-          accept="image/*"
-          
-          className="text-sm text-gray-600"
-        />
+        {/* Bookings */}
+        <section className="md:w-2/3 bg-white rounded-lg shadow p-6">
+          <MyBookings bookingsPromise={res} />
+        </section>
       </div>
-
-      {/* Name Field */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-        <input
-          name="name"
-          defaultValue={profile?.name}
-          type="text"
-          className="w-full bg-gray-50 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg px-4 py-2 outline-none transition"
-        />
-      </div>
-
-      {/* Phone Number */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-        <input
-          name="phone"
-          defaultValue={profile?.phone}
-          type="text"
-          className="w-full bg-gray-50 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg px-4 py-2 outline-none transition"
-        />
-      </div>
-
-      {/* About Field */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">About</label>
-        <textarea
-          name="about"
-          defaultValue={profile?.about}
-          rows={4}
-          className="w-full bg-gray-50 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg px-4 py-2 outline-none transition resize-none"
-        />
-      </div>
-
-      {/* Save Button */}
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition"
-      >
-        Save Changes
-      </button>
-    </form>
+    </div>
   );
 }

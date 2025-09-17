@@ -2,7 +2,7 @@
  
 import { createContext } from 'react'
 
-interface Listing{
+export interface Listing{
     id: number
     title: string ,
     description : string ,

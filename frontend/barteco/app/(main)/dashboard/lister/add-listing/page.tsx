@@ -78,17 +78,20 @@ export default function Page() {
   </div>
 
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Unit
-    </label>
-    <input
-      name="unit"
-      type="text"
-      defaultValue={state.unit}
-      placeholder="Add unit (day, hour, etc.)"
-      className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Unit
+  </label>
+  <select
+    name="unit"
+    defaultValue={state.unit}
+    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    <option value="" disabled>Select unit</option>
+    <option value="day">Day</option>
+    <option value="hour">Hour</option>
+  </select>
+</div>
+
 
   <div>
     <label className="block text-sm font-medium text-gray-700 mb-1">

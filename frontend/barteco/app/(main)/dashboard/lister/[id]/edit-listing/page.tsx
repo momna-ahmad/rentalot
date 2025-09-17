@@ -93,15 +93,18 @@ export default function EditListing() {
                 <label htmlFor="unit" className="block text-sm font-medium text-gray-700 mb-1">
                   Unit
                 </label>
-                <input
-                  type="text"
-                  id="unit"
-                  name="unit"
-                  defaultValue={listing?.unit}
-                  placeholder="e.g., day, hour, item"
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+                <select
+  id="unit"
+  name="unit"
+  defaultValue={listing?.unit || ''}
+  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  required
+>
+  <option value="" disabled>Select a unit</option>
+  <option value="day">Day</option>
+  <option value="hour">Hour</option>
+</select>
+
               </div>
 
               {/* Category */}

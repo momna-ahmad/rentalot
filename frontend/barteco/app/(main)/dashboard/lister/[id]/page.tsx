@@ -1,6 +1,7 @@
 import ActionsOnListings from "@/components/actions-on-listings";
 import DisplayImg from "@/components/display-images";
 import ListingProvider from "@/context/useListingContext";
+import BookingCalendar from "@/components/booking-calender";
 
 interface PageProps {
   params: { id: string };

@@ -1,6 +1,7 @@
 import DisplayImg from "@/components/display-images";
 import api from "@/hooks/axiosInstance";
 import Link from "next/link";
+import BookListing from "@/components/book-listing";
 
 type Params = {
   params: {
@@ -73,6 +74,7 @@ export default async function ListingDetail({ params }: Params) {
             View Profile
           </button>
           </Link>
+          <BookListing id={params.id} unit={listing.unit} cost={listing.price} />
         </div>
       </div>
     </div>

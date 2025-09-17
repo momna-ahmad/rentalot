@@ -7,6 +7,7 @@ import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import messageRoutes from './routes/message.js' ;
 import cookieParser from "cookie-parser";
+import bookingRoutes from './routes/bookings.js' ;
 
 const app = express();
 const server = createServer(app);
@@ -41,6 +42,7 @@ app.use(cookieParser());
 app.use(userRoutes);
 app.use(listingRoutes) ;
 app.use(messageRoutes) ;
+app.use(bookingRoutes) ;
 
 const onlineUsers = new Map();
 
