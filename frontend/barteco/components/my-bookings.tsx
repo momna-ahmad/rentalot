@@ -1,14 +1,13 @@
 'use client';
 
-import { Timestamp } from "next/dist/server/lib/cache-handlers/types"; 
 import { Listing } from "@/context/useListingContext";
 import { use } from "react";
 
 import { format } from "date-fns";
 
-interface Booking {
-  start_date_time: Timestamp;
-  end_date_time: Timestamp;
+export interface Booking {
+  start_date_time: string;
+  end_date_time: string;
   cost: number;
   duration: number;
   listing: Listing;

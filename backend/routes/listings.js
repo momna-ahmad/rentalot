@@ -35,6 +35,47 @@ router.get('/listing-detail/:id' , async(req, res)=>{
         
     console.log(listing) ;
     return res.status(200).json({listing}) ;
-})
+});
+
+router.get('/search-listings' , async(req , res)=>{
+    const { query, page = 1 , category } = req.query;
+
+    const listingsPerPage = 10;
+    const offset = (parseInt(page) - 1) * listingsPerPage;
+
+    // Start the Supabase query
+    let supabaseQuery = supabase
+    .from('listings')
+    .select('*', { count: 'exact' }) // include count for pagination
+    .range(offset, offset + listingsPerPage - 1);
+
+     // Step 1: Filter by category (if provided)
+  if (category) {
+    supabaseQuery = supabaseQuery.eq('category', category);
+  }
+
+  // Step 2: Filter by search keyword in title, location, or description
+  if (query) {
+    supabaseQuery = supabaseQuery.or(
+      `title.ilike.%${query}%,location.ilike.%${query}%,description.ilike.%${query}%`
+    );
+  }
+
+  // Execute the query
+  const { data, error, count } = await supabaseQuery;
+  if (error) {
+    console.error('Error fetching listings:', error);
+    return res.status(500).json({ message: 'Server error', error });
+  }
+
+  console.log('data in search ' , data) ;
+  res.status(200).json({
+    data,
+    total: count,
+    currentPage: parseInt(page),
+    totalPages: Math.ceil(count / listingsPerPage)
+  });
+
+});
 
 export default router ;

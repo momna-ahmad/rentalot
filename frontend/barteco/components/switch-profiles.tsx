@@ -7,7 +7,8 @@ export default function SwitchProfiles(){
       const router = useRouter()
 
     const navigateToBrowsing =( )=>{
-        router.replace('/dashboard/customer')
+        //router.replace('/dashboard/customer')
+        router.replace('/')
     }
 
     const navigateToDashboard =( )=>{

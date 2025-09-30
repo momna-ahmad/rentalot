@@ -59,4 +59,37 @@ router.get('/my-bookings' , authenticate , async(req , res)=>{
   return res.status(200).json(data) ;
 }) ;
 
+router.get('/customer-bookings' , authenticate , async(req , res)=>{
+    const user = await fetchUser(req.user.sub);
+    const { data, error } = await supabase
+  .from('bookings')
+  .select(`
+    *,
+    listing:listing (*) 
+  `) //populates listing column
+  .eq('listing.owner',user) //foreign table filtering
+  .gte('start_date_time', new Date().toISOString())
+  .order('start_date_time', { ascending: true });
+
+  console.log(data) ;
+  return res.status(200).json(data) ;
+});
+
+router.get('/bookings-for-listing/:id'  , async(req , res)=>{
+    const {id} = req.params ;
+    const { data, error } = await supabase
+  .from('bookings')
+  .select(`
+    *,
+    listing:listing (*) 
+  `) //populates listing column
+  .eq('listing',id) //foreign table filtering
+  .gte('start_date_time', new Date().toISOString())
+  .order('start_date_time', { ascending: true });
+    console.log('bookings' , data) ;
+    if(error)
+        return res.status(500).json({error}) ;
+    return res.status(200).json(data) ;
+});
+
 export default router ;

@@ -3,8 +3,9 @@
 import React, { useState, useActionState , useEffect } from 'react';
 import BookingCalendar from './booking-calender';
 import { handleBooking } from '@/lib/action';
+import { Booking } from './my-bookings';
 
-export default function BookListing({ id, unit, cost }: { id: string; unit: string , cost: number}) {
+export default function BookListing({ id, unit, cost , bookings }: { id: string; unit: string , cost: number , bookings:Booking[] }) {
   const [showModal, setShowModal] = useState(false);
   const [duration, setDuration] = useState('');
   const [startDateTime, setStartDateTime] = useState<string | null>(null);
@@ -88,7 +89,7 @@ export default function BookListing({ id, unit, cost }: { id: string; unit: stri
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select start {unit === 'day' ? 'date' : 'time'}:
               </label>
-              <BookingCalendar unit={unit} onDateSelect={handleDateSelect} />
+              <BookingCalendar unit={unit} onDateSelect={handleDateSelect} bookings={bookings} />
             </div>
 
             {/* Hidden fields for form submission */}

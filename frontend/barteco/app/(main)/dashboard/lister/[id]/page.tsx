@@ -1,7 +1,7 @@
 import ActionsOnListings from "@/components/actions-on-listings";
 import DisplayImg from "@/components/display-images";
 import ListingProvider from "@/context/useListingContext";
-import BookingCalendar from "@/components/booking-calender";
+import ListingBookings from "@/components/listing-bookings";
 
 interface PageProps {
   params: { id: string };
@@ -10,15 +10,31 @@ interface PageProps {
 export default async function Listing({ params }: PageProps) {
   const { id } = params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listing/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    cache: "no-store",
-  });
+  //parallel data fetching 
+  const [ listingRes, bookingRes ] = await Promise.all(
+    [
+       fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listing/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }) ,
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings-for-listing/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      })
+  ]
+  );
 
-  const listing = await res.json();
-  console.log('listing' ,listing);
+  const [listing , bookings] = await Promise.all(
+    [
+      listingRes.json() ,
+      bookingRes.json()
+    ]
+  );
+  
 
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10 md:px-20">
@@ -92,6 +108,10 @@ export default async function Listing({ params }: PageProps) {
         <ListingProvider value={listing}>
           <ActionsOnListings />
         </ListingProvider>
+
+        {/* display booking calender*/}
+        <ListingBookings unit={listing.unit} bookings={bookings} />
+        
       </div>
     </main>
   );
