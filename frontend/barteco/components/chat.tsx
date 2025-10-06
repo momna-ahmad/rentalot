@@ -1,16 +1,24 @@
 "use client";
 
-import { useEffect, useState, useRef, use } from "react";
+import { useEffect, useState, useRef } from "react";
 import { io, Socket } from "socket.io-client";
-import { useChat , ChatMessage } from "@/context/useChatContext";
-
+import { useChat } from "@/context/useChatContext";
 
 export default function Chat({ current }: { current: string | undefined }) {
-  const { selectedChat , messages  } = useChat();
+  const {
+    selectedChat,
+    setSelectedChat,
+    messages,
+    setMessages,
+    clearMessages,
+  } = useChat();
+
   const [message, setMessage] = useState("");
-  const [chat, setChat] = useState<ChatMessage[]>(messages);
   const socketRef = useRef<Socket | null>(null);
 
+  console.log("Chat component rendered");
+
+  // ✅ Setup socket connection once
   useEffect(() => {
     if (!socketRef.current) {
       socketRef.current = io(`${process.env.NEXT_PUBLIC_API_URL}`, {
@@ -25,51 +33,66 @@ export default function Chat({ current }: { current: string | undefined }) {
     return () => {
       socketRef.current?.disconnect();
     };
-  }, []);
+  }, [current]);
 
-  useEffect(() => {
-    setChat(messages) ;
-}, [messages]);
-
+  // ✅ Handle receiving private messages
   useEffect(() => {
     if (selectedChat && socketRef.current) {
-      socketRef.current.on("receive_private_message", ({ message }) => {
-        setChat((prev) => [...prev, { sent: false , content : message }]);
-      });
+      const handleReceiveMessage = ({ message }: { message: string }) => {
+        setMessages((prev) => [...prev, { sent: false, content: message }]);
+      };
 
+      socketRef.current.on("receive_private_message", handleReceiveMessage);
+
+      // ✅ Cleanup on chat switch or unmount
       return () => {
-        socketRef.current?.off("receive_private_message");
+        socketRef.current?.off("receive_private_message", handleReceiveMessage);
+        clearMessages();
       };
     }
-  }, [selectedChat]);
+  }, [selectedChat, setMessages]);
 
-  const sendMessage = async(e: React.FormEvent) => {
+  // ✅ Send message handler
+  const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() === "") return;
+    if (message.trim() === "" || !selectedChat) return;
 
+    // Emit message via socket
     socketRef.current?.emit("send_private_message", {
       message,
-      to: selectedChat?.id,
-    });
-    //save message to backend
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message : message,
-        sender : current,
-        user2: selectedChat?.id,
-        chat : selectedChat?.inbox
-      })
+      to: selectedChat.id,
     });
 
-    setChat((prev) => [...prev, { sent: true , content : message }]);
+    // Save to backend
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/message`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        sender: current,
+        user2: selectedChat.id,
+        chat: selectedChat.inbox,
+      }),
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    // ✅ Set inbox ID if it's first message
+    if (!selectedChat.inbox && selectedChat.id && selectedChat.name) {
+      setSelectedChat({
+        id: selectedChat.id,
+        name: selectedChat.name,
+        inbox: data.chat,
+      });
+    }
+
+    // ✅ Add message to context
+    setMessages((prev) => [...prev, { sent: true, content: message }]);
     setMessage("");
   };
 
-  // ✅ Skeleton when no chat selected
+  // ✅ No chat selected
   if (!selectedChat) {
     return (
       <div className="flex flex-col items-center justify-center h-[80vh] bg-gray-50 rounded-xl shadow-md">
@@ -84,35 +107,35 @@ export default function Chat({ current }: { current: string | undefined }) {
     );
   }
 
+  // ✅ Chat UI
   return (
     <div className="max-w-3xl mx-auto mt-10 flex flex-col h-[80vh] bg-white rounded-2xl shadow-lg overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 bg-gray-100 shadow-sm">
         <h2 className="text-lg font-semibold text-gray-800">
-          {selectedChat?.name}
+          {selectedChat.name}
         </h2>
       </div>
-      
+
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-3 bg-gray-50">
-  {chat.map((msg, idx) => (
-    <div
-      key={idx}
-      className={`flex ${msg.sent ? "justify-end" : "justify-start"}`}
-    >
-      <div
-        className={`px-4 py-2 rounded-2xl max-w-xs shadow-sm ${
-          msg.sent
-            ? "bg-blue-600 text-white rounded-br-none"
-            : "bg-gray-200 text-gray-800 rounded-bl-none"
-        }`}
-      >
-        <h1>{msg.content}</h1>
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            className={`flex ${msg.sent ? "justify-end" : "justify-start"}`}
+          >
+            <div
+              className={`px-4 py-2 rounded-2xl max-w-xs shadow-sm ${
+                msg.sent
+                  ? "bg-blue-600 text-white rounded-br-none"
+                  : "bg-gray-200 text-gray-800 rounded-bl-none"
+              }`}
+            >
+              <h1>{msg.content}</h1>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
-  ))}
-</div>
-
 
       {/* Input */}
       <form

@@ -1,7 +1,8 @@
 import SearchBar from "@/components/search-bar";
 import Categories from "@/components/categories";
-import { cookies } from "next/headers";
 import api from "@/hooks/axiosInstance";
+
+import { auth } from "@/auth";
 
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -10,11 +11,12 @@ export default async function Page(props: {
     category?: string;
   }>;
 }) {
+  
   const searchParams = await props.searchParams;
   const category = searchParams?.category || 'homes'; //default category should be homes
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
-  console.log(' cateogry query page' , category , query , currentPage) ;
+  
   //fetch data only if query is present 
   
     const res = await api.get('/search-listings' , {

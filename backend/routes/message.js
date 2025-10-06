@@ -5,6 +5,7 @@ import fetchUser from '../utils/fetchuser.js';
 
 const router = express.Router() ;
 
+//if user is messaging for the first time create a chat room
 router.post('/message' , async(req , res)=>{
     let {message , sender , user2  } = req.body ;
     let {chat} = req.body ;
@@ -98,5 +99,50 @@ router.get('/messages/:chatId' , authenticate , async (req, res) => {
   }) ;
   return res.status(200).json(messages) ;
 });
+
+//get the inbox between both user if they have texted before
+router.get('/inbox/:userId', authenticate, async (req, res) => {
+  const { userId } = req.params;
+  const currentUserId = await fetchUser(req.user.sub) ;
+  
+  try {
+    // 1. Get the other user
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (userError || !userData) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // 2. Try to find existing chat
+    const { data: chatData, error: chatError } = await supabase
+      .from('chats')
+      .select('*')
+      .or(
+        `and(user_id.eq.${currentUserId},user2_id.eq.${userId}),and(user_id.eq.${userId},user2_id.eq.${currentUserId})`
+      )
+      .maybeSingle(); //  use maybeSingle() to avoid throwing when no chat found
+
+    // 3. Return chatWithName even if chatData is null
+    const chatWithName = {
+      otherUser: {
+        id: userData.id,
+        name: userData.name,
+      },
+      id: chatData?.id, // ✅ undefined if chat not found
+    };
+
+    console.log(chatWithName);
+
+    return res.status(200).json(chatWithName);
+  } catch (err) {
+    console.error('Failed to retrieve inbox:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 export default router ;

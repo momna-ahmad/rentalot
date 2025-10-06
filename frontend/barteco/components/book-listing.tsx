@@ -22,8 +22,12 @@ export default function BookListing({ id, unit, cost , bookings }: { id: string;
   const [state, formAction, isPending] = useActionState(handleBooking, initialState);
 
   useEffect(() => {
-  if (state?.error && !isPending) {
-    alert(state.error);
+  if (!isPending) {
+    if (state?.error) {
+      alert(state.error);
+    } else if (state?.success) {
+      alert('Booking successful!');
+    }
   }
 }, [state?.error, isPending]);
 

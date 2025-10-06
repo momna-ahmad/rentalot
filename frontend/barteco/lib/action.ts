@@ -168,6 +168,7 @@ export async function handleBooking(prevState: any, formData: FormData) {
       return {
         ...prevState,
         error: errorData.error?.message || 'Failed to book listing',
+        
       };
     }
 
@@ -175,6 +176,7 @@ export async function handleBooking(prevState: any, formData: FormData) {
     return {
       ...prevState,
       error: null,
+      success: true,
     };
   } catch (err) {
     console.error('Booking failed:', err);

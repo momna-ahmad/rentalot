@@ -68,7 +68,6 @@ router.get('/search-listings' , async(req , res)=>{
     return res.status(500).json({ message: 'Server error', error });
   }
 
-  console.log('data in search ' , data) ;
   res.status(200).json({
     data,
     total: count,

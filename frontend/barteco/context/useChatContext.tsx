@@ -16,7 +16,7 @@ interface ChatContextType {
   selectedChat: Chat | null;
   setSelectedChat: (chat: Chat | null) => void;
   messages: ChatMessage[];
-  setMessages: (msgs: ChatMessage[]) => void;
+  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
   addMessage: (msg: ChatMessage) => void;
   clearMessages: () => void;
 }

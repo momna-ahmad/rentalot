@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import {auth } from '@/auth' ;
 import ProfileProvider  from '@/context/useProfileContext'
+import ChatProvider from "@/context/useChatContext";
+import Providers from "@/lib/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +57,8 @@ if (session?.user != null) {
 
 
   return (
+    <Providers session={session}>
+    <ChatProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -76,5 +80,7 @@ if (session?.user != null) {
         </>
       </body>
     </html>
+    </ChatProvider>
+    </Providers>
   );
 }
