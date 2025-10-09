@@ -12,17 +12,45 @@ router.get('/' , async (req , res)=>{
 });
 
 //generic route for fetchings listings of a particular category
-router.get('/get-listings/:category' , async(req, res)=>{
-    const {category } = req.params ;
-    console.log(category);
-    const {data , error} = await supabase.from('listings').select('*').eq('category',category) ;
-    if(error)
-        return res.json({message: 'unexpected error'}) ;
-    console.log(data) ;
+router.get('/get-listings', async (req, res) => {
+  
+  try {
+
+    const { category, page } = req.query;
+
+    const listingsPerPage = 12;
+    const currentPage = parseInt(page) || 1;
+    const from = (currentPage - 1) * listingsPerPage;
+    const to = from + listingsPerPage - 1;
+
+    let query = supabase.from('listings').select('*', { count: 'exact' });
+
+    // Filter by category if provided
+    if (category) {
+      query = query.eq('category', category);
+    }
+
+    // Apply range for pagination
+    const { data, error, count } = await query.range(from, to);
+
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Unexpected error' });
+    }
+
+    const totalPages = Math.ceil((count || 0) / listingsPerPage);
+
     return res.status(200).json({
-        data
-    })
-})
+      listings: data,
+      totalPages,
+      currentPage,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Unexpected server error' });
+  }
+});
+
 
 router.get('/listing-detail/:id' , async(req, res)=>{
     const {id} = req.params ;
@@ -38,10 +66,12 @@ router.get('/listing-detail/:id' , async(req, res)=>{
 });
 
 router.get('/search-listings' , async(req , res)=>{
-    const { query, page = 1 , category } = req.query;
+  console.log('search route');
+    const { query, page , category } = req.query;
 
-    const listingsPerPage = 10;
-    const offset = (parseInt(page) - 1) * listingsPerPage;
+    const currentPage = parseInt(page) || 1;
+    const listingsPerPage = 12;
+    const offset = (parseInt(currentPage) - 1) * listingsPerPage;
 
     // Start the Supabase query
     let supabaseQuery = supabase

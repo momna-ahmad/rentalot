@@ -27,7 +27,7 @@ export default function SwitchProfiles(){
             :
             
             <button onClick={navigateToDashboard}>
-                Switch to lister profile
+                Switch to listing
             </button>
             
         }

@@ -34,11 +34,11 @@ export async function authenticate(
 }
 
 export async function signout(){
-  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
-    headers:{
-      withCredentials: 'include'
-    }
-  });
+  //await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
+  //  headers:{
+  //    withCredentials: 'include'
+  //  }
+  //});
   return await signOut({ redirectTo: '/' });
 }
 
@@ -64,11 +64,13 @@ payload.append('category', category);
 payload.append('location', location);
 
 const files = formData.getAll('images') as File[];
+console.log('files' , files) ;
 // Append files
 files?.forEach((file) => {
   payload.append('images', file);
 });
 
+console.log('payload' , payload) ;
   //not using application json becz backend cant read files as json
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-listings/${id}`, {
     method: 'POST',
@@ -116,7 +118,7 @@ const file = formData.get('image') as File;
 
 
   //not using application json becz backend cant read files as json
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/book-listing`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/edit-profile`, {
     method: 'POST',
     headers:{
       Authorization: `Bearer ${(session?.user as any).token}` ,

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function DisplayImg({ imgs }: {imgs : string[]}) {
+export default function DisplayImg({ imgs }: { imgs: string[] }) {
   const [displayAll, setDisplayAll] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
@@ -16,7 +16,8 @@ export default function DisplayImg({ imgs }: {imgs : string[]}) {
 
   return (
     <>
-      {displayAll ? (
+      {/* Fullscreen Image Viewer */}
+      {displayAll && (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
           {/* Close button */}
           <button
@@ -50,18 +51,26 @@ export default function DisplayImg({ imgs }: {imgs : string[]}) {
             ❯
           </button>
         </div>
-      ) : (
-        <div>
-          <button onClick={() => setDisplayAll(true)}>
+      )}
+
+      {/* Grid View of All Images */}
+      <div className="grid grid-cols-3 gap-2 mt-4">
+        {imgs.map((img, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              setActiveIndex(index);
+              setDisplayAll(true);
+            }}
+          >
             <img
-              key={0}
-              src={imgs[0]}
-              alt={`Listing Image 1`}
-              className="w-32 h-32 object-cover rounded-md border cursor-pointer"
+              src={img}
+              alt={`Listing Image ${index + 1}`}
+              className="w-full h-32 object-cover rounded-md border hover:opacity-80 transition"
             />
           </button>
-        </div>
-      )}
+        ))}
+      </div>
     </>
   );
 }

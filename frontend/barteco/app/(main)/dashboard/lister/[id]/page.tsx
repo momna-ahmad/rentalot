@@ -7,111 +7,108 @@ interface PageProps {
   params: { id: string };
 }
 
+function capitalizeFirstWord(str: string) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export default async function Listing({ params }: PageProps) {
   const { id } = params;
 
-  //parallel data fetching 
-  const [ listingRes, bookingRes ] = await Promise.all(
-    [
-       fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listing/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      }) ,
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings-for-listing/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      })
-  ]
-  );
+  // Parallel data fetching
+  const [listingRes, bookingRes] = await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listing/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    }),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings-for-listing/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    }),
+  ]);
 
-  const [listing , bookings] = await Promise.all(
-    [
-      listingRes.json() ,
-      bookingRes.json()
-    ]
-  );
-  
+  const [listing, bookings] = await Promise.all([
+    listingRes.json(),
+    bookingRes.json(),
+  ]);
 
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10 md:px-20">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 md:p-12">
-        {/* Title */}
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-6 leading-tight">
-          {listing.title}
-        </h1>
+      <div className="flex flex-col md:flex-row gap-10 items-start">
 
-        {/* Description */}
-        <p className="text-gray-700 text-lg mb-8 leading-relaxed">
-          {listing.description}
-        </p>
+        {/* Left Column: Listing Card */}
+        <div className="md:w-2/3 w-full bg-white rounded-xl shadow-md p-6 space-y-8">
 
-        {/* Key Details */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
-          <div>
-            <span className="block text-sm font-medium text-gray-500 mb-1">
-              Price
-            </span>
-            <span className="text-2xl font-semibold text-gray-800">
-              PKR {listing.price}
-            </span>
+          {/* Image Preview */}
+          {listing.img_urls?.length > 0 && (
+            <div className="rounded-lg overflow-hidden shadow-sm">
+              <DisplayImg imgs={listing.img_urls} />
+            </div>
+          )}
+
+          {/* Title */}
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight leading-snug">
+            {capitalizeFirstWord(listing.title)}
+          </h1>
+
+          {/* Description */}
+          <p className="text-gray-600 text-lg leading-relaxed">
+            {listing.description}
+          </p>
+
+          {/* Key Details */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
+            <div>
+              <span className="block text-sm font-medium text-gray-500 mb-1">
+                Price
+              </span>
+              <span className="text-xl font-semibold text-gray-800">
+                PKR {listing.price}
+              </span>
+            </div>
+
+            <div>
+              <span className="block text-sm font-medium text-gray-500 mb-1">
+                Unit
+              </span>
+              <span className="text-xl font-semibold text-gray-800 capitalize">
+                {listing.unit}
+              </span>
+            </div>
+
+            <div>
+              <span className="block text-sm font-medium text-gray-500 mb-1">
+                Category
+              </span>
+              <span className="text-xl font-semibold text-gray-800 capitalize">
+                {listing.category}
+              </span>
+            </div>
+
+            <div>
+              <span className="block text-sm font-medium text-gray-500 mb-1">
+                Location
+              </span>
+              <span className="text-xl font-semibold text-gray-800 capitalize">
+                {listing.location || "Not provided"}
+              </span>
+            </div>
           </div>
 
-          <div>
-            <span className="block text-sm font-medium text-gray-500 mb-1">
-              Unit
-            </span>
-            <span className="text-2xl font-semibold text-gray-800">
-              {listing.unit}
-            </span>
-          </div>
-
-          <div>
-            <span className="block text-sm font-medium text-gray-500 mb-1">
-              Category
-            </span>
-            <span className="text-2xl font-semibold text-gray-800 capitalize">
-              {listing.category}
-            </span>
-          </div>
-
-          <div>
-            <span className="block text-sm font-medium text-gray-500 mb-1">
-              Location
-            </span>
-            {
-              listing.location? (
-                <span className="text-2xl font-semibold text-gray-800 capitalize">
-              {listing.location}
-            </span>
-              ):
-              <span className="text-2xl font-semibold text-gray-800 capitalize">
-              Not provided
-            </span>
-              
-            }
-            
-          </div>
+          {/* Actions */}
+          <ListingProvider value={listing}>
+            <ActionsOnListings />
+          </ListingProvider>
         </div>
 
-        {/* Image Preview */}
-        {listing.img_urls?.length > 0 && (
-          <div className="mb-10 rounded-lg overflow-hidden shadow-md">
-            <DisplayImg imgs={listing.img_urls} />
-          </div>
-        )}
-
-        {/* Actions */}
-        <ListingProvider value={listing}>
-          <ActionsOnListings />
-        </ListingProvider>
-
-        {/* display booking calender*/}
-        <ListingBookings unit={listing.unit} bookings={bookings} />
-        
+        {/* Right Column: Booking Calendar Card */}
+        <div className="md:w-1/3 w-full bg-white rounded-xl shadow-md p-6">
+          <ListingBookings unit={listing.unit} bookings={bookings} />
+        </div>
       </div>
     </main>
   );

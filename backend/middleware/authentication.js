@@ -28,7 +28,9 @@ export default function authenticate(req, res, next) {
     req.user = decoded; 
     next();
   } catch (err) {
-    console.error(err);
+    if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token expired', expiredAt: err.expiredAt });
+    } 
     return res.status(401).json({ error: 'Unauthorized: Invalid Supabase token' });
   }
 }

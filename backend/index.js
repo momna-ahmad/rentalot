@@ -46,9 +46,22 @@ app.use(bookingRoutes) ;
 
 const onlineUsers = new Map();
 
+io.use((socket, next) => {
+  const userId = socket.handshake.auth.userId; // sent from client
+  if (!userId) {
+    return next(new Error("Unauthorized"));
+  }
+  socket.userId = userId; // store in socket object
+  next();
+});
+
+
 io.on('connection', (socket) => {
   console.log('a user connected' , socket.id);
-  const userId = socket.data.userId;
+  
+  //const userId = socket.data.userId;
+  const userId = socket.userId;
+
 
   if (!onlineUsers.has(userId)) {
     onlineUsers.set(userId, new Set());
@@ -56,7 +69,7 @@ io.on('connection', (socket) => {
   onlineUsers.get(userId).add(socket.id);
 
   console.log(`User ${userId} connected with socket ${socket.id}`);
-  
+  console.log('online users' ,onlineUsers);
   
   // Handle sending message
   // listen for private messages
@@ -64,9 +77,10 @@ io.on('connection', (socket) => {
   console.log("Message from", userId, "to", to, ":", message);
 
   const targetSockets = onlineUsers.get(String(to));
-  console.log(onlineUsers);
+  console.log('targetSockets' , targetSockets);
   if (targetSockets) {
     targetSockets.forEach((socketId) => {
+      console.log('emitting to socketId' , socketId) ;
       io.to(socketId).emit("receive_private_message", {
         message,
         from: userId,

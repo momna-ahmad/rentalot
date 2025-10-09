@@ -61,13 +61,14 @@ router.get('/my-bookings' , authenticate , async(req , res)=>{
 
 router.get('/customer-bookings' , authenticate , async(req , res)=>{
     const user = await fetchUser(req.user.sub);
+    console.log('user' , user) ;
     const { data, error } = await supabase
   .from('bookings')
   .select(`
     *,
     listing:listing (*) 
   `) //populates listing column
-  .eq('listing.owner',user) //foreign table filtering
+  .eq('owner',user) //foreign table filtering
   .gte('start_date_time', new Date().toISOString())
   .order('start_date_time', { ascending: true });
 

@@ -12,7 +12,7 @@ interface Listing {
   unit: string;
   owner: string;
   location?: string;
-}
+} 
 
 export default function Listings({
   listings,

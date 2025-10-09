@@ -29,10 +29,15 @@ export default async function UserListings() {
           >
             {/* Left: Image */}
             {listing.img_urls?.length > 0 && (
-              <div className="w-32 h-32 flex-shrink-0">
-                <DisplayImg imgs={listing.img_urls} />
-              </div>
-            )}
+              <div className="w-32 h-32 flex-shrink-0 rounded-md overflow-hidden border">
+                <img
+                src={listing.img_urls[0]}
+                alt={listing.title}
+                className="w-full h-full object-cover"
+                />
+                </div>
+              )}
+
 
             {/* Right: Listing Info */}
             <div className="flex-1">

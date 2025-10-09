@@ -43,7 +43,7 @@ export default async function ListingDetail({ params }: Params) {
         <div className="space-y-5 text-gray-700 leading-relaxed">
           <div>
             <span className="block font-medium text-gray-900 mb-1">Description</span>
-            <p>{listing.description}</p>
+            <p className="whitespace-pre-line">{listing.description}</p>
           </div>
 
           <div>

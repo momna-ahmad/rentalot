@@ -1,7 +1,4 @@
 
-import Listings from "@/components/listings";
-import Categories from "@/components/categories";
-
 interface PageProps{
     params : {category : string} 
 }
@@ -15,7 +12,7 @@ export default function Page({ params }: PageProps){
     })*/
     return (
         <>
-            <Categories/>
+            {/*<Categories/>*/}
         </>
     )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useActionState } from 'react';
+import { useContext, useActionState, useState } from 'react';
 import { ProfileContext } from '@/context/useProfileContext';
 import Image from 'next/image';
 import { editProfile } from '@/lib/action';
@@ -8,27 +8,38 @@ import { editProfile } from '@/lib/action';
 export default function ProfileForm() {
   const profile = useContext(ProfileContext);
 
-  const [error , formAction, isPending] = useActionState(
-        editProfile,
-        null
-      );
+  const [error, formAction, isPending] = useActionState(editProfile, null);
+
+  const [preview, setPreview] = useState<string | null>(null);
+
+  // Handle file input and preview
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <form
       action={formAction}
       className="w-full max-w-2xl mx-auto p-8 bg-white rounded-xl shadow space-y-6"
     >
-        {error && (
+      {error && (
         <div className="text-red-600 bg-red-100 px-4 py-2 rounded">
           {error}
         </div>
       )}
 
       {/* Profile Image */}
-      <div className="flex flex-col items-center space-y-2">
-        <div className="w-28 h-28 rounded-full overflow-hidden border border-gray-300">
+      <div className="flex flex-col items-center space-y-4">
+        <div className="w-28 h-28 rounded-full overflow-hidden border border-gray-300 shadow">
           <Image
-            src={profile?.profile || '/default-avatar.svg'}
+            src={preview || profile?.profile || '/default-avatar.svg'}
             alt="Profile"
             width={112}
             height={112}
@@ -36,13 +47,17 @@ export default function ProfileForm() {
           />
         </div>
 
-        <input
-          type="file"
-          name='image'
-          accept="image/*"
-          
-          className="text-sm text-gray-600"
-        />
+        {/* File input styled */}
+        <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded transition">
+          Choose Image
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+        </label>
       </div>
 
       {/* Name Field */}
@@ -83,7 +98,7 @@ export default function ProfileForm() {
         type="submit"
         className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition"
       >
-        Save Changes
+        {isPending ? 'Saving...' : 'Save Changes'}
       </button>
     </form>
   );

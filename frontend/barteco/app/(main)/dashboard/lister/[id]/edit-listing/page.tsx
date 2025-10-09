@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 export default function EditListing() {
   const listing = useContext(ListingContext);
   const [open, setOpen] = useState(false);
-  const categories = ['home', 'vehicle', 'hall', 'Other'];
+  const categories = ['homes', 'vehicles', 'halls', 'Others'];
   const router = useRouter();
 
   async function handleEdit(formData: FormData) {

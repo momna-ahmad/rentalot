@@ -225,27 +225,43 @@ router.get('/get-user-profile' , authenticate , async( req , res)=>{
   return res.status(200).json(user[0]) ;
 });
 
-router.post('/edit-profile' , authenticate , handleMulter ,   async(req, res)=>{
-  console.log('edit profile') ;
-  const uid = req.user.sub ;
+router.post('/edit-profile', authenticate, handleMulter, async (req, res) => {
+  console.log('edit profile');
+  const uid = req.user.sub;
   const image = req.file;
-  console.log('Uploaded Image:', image);
-  const {name , about , phone} = req.body ;
-  
-  const { data : user , error} = await supabase.from('users').update({
-      name,
-      about,
-      phone ,
-      profile: image ? image.path : null, // or URL if uploaded
-    })
-    .eq('user_uid',uid).select().single() ;
-    if(error)
-      return console.log(error);
-    console.log(user) ;
+  const { name, about, phone } = req.body;
+
+  // Build the update object conditionally
+  const updateFields = {
+    name,
+    about,
+    phone,
+  };
+
+  // Only add 'profile' field if an image was uploaded
+  if (image) {
+    updateFields.profile = image.path; // or image URL if you store it elsewhere
+  }
+
+  const { data: user, error } = await supabase
+    .from('users')
+    .update(updateFields)
+    .eq('user_uid', uid)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating profile:', error);
+    return res.status(500).json({ message: 'Failed to update profile' });
+  }
+
+  console.log('Updated User:', user);
   return res.status(200).json({
-    message : 'success'
+    message: 'Profile updated successfully',
+    user,
+  });
 });
-});
+
 
 router.get('/logout' , (req , res)=>{
   res.clearCookie('token') ;

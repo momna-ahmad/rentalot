@@ -1,8 +1,8 @@
 import SearchBar from "@/components/search-bar";
 import Categories from "@/components/categories";
 import api from "@/hooks/axiosInstance";
+import Link from "next/link";
 
-import { auth } from "@/auth";
 
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -26,7 +26,8 @@ export default async function Page(props: {
         category ,
       }
     });
-    console.log('search listings' , res.data) ;
+
+    const totalPages = res.data?.totalPages || 1;
 
   return (
     <>
@@ -60,6 +61,39 @@ export default async function Page(props: {
 
       {/* Categories section below hero */}
       <Categories listings={res.data.data} />
+
+      {/* Pagination */}
+<div className="flex justify-center items-center gap-4 my-12 text-sm">
+  {/* Previous Button */}
+  <Link
+    href={`?query=${query}&category=${category}&page=${currentPage - 1}`}
+    className={`w-28 text-center px-4 py-2 rounded transition ${
+      currentPage > 1
+        ? 'bg-blue-600 text-white hover:bg-blue-700'
+        : 'bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none'
+    }`}
+  >
+    ← Previous
+  </Link>
+
+  {/* Page Info */}
+  <span className="text-gray-700 min-w-[100px] text-center">
+    Page {currentPage} of {totalPages}
+  </span>
+
+  {/* Next Button */}
+  <Link
+    href={`?query=${query}&category=${category}&page=${currentPage + 1}`}
+    className={`w-28 text-center px-4 py-2 rounded transition ${
+      currentPage < totalPages
+        ? 'bg-blue-600 text-white hover:bg-blue-700'
+        : 'bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none'
+    }`}
+  >
+    Next →
+  </Link>
+</div>
+
     </>
   );
 }

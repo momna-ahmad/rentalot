@@ -2,10 +2,11 @@ import "./globals.css";
 import Navbar from "../../components/navbar";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import {auth } from '@/auth' ;
-import ProfileProvider  from '@/context/useProfileContext'
-import ChatProvider from "@/context/useChatContext";
+import { auth } from '@/auth';
+import ProfileProvider from '@/context/useProfileContext';
+
 import Providers from "@/lib/providers";
+import { redirect } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,60 +28,54 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   const session = await auth();
   let profile = null;
 
-if (session?.user != null) {
-  console.log("fetching profile");
+  if (session?.user != null) {
+    console.log("fetching profile");
 
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-profile`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${(session?.user as any).token}`,
-      },
-      cache: 'no-store', // optional, to force server fetch
-    });
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-profile`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${(session?.user as any).token}`,
+        },
+        cache: 'no-store',
+      });
 
-    if (!res.ok) {
-      throw new Error('Failed to fetch profile');
+      if (!res.ok) {
+        profile = null;
+        redirect('/sign-in');
+      }
+
+      profile = await res.json();
+    } catch (err) {
+      console.error('Error fetching profile:', err);
     }
-
-    profile = await res.json();
-  } catch (err) {
-    console.error('Error fetching profile:', err);
-    // profile remains null
   }
-}
-
-
 
   return (
     <Providers session={session}>
-    <ChatProvider>
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <>
-        {session?.user != null ?
-        <>
-        <ProfileProvider value={profile}>
-          <Navbar/>
-          {children}
-        </ProfileProvider>
-        </>
-         :
-        <>
-        <Navbar/>
-          {children}
-        </>
-        }
-        </>
-      </body>
-    </html>
-    </ChatProvider>
+        <html lang="en">
+          <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
+            {session?.user != null ? (
+              <ProfileProvider value={profile}>
+                <Navbar />
+                <main className="flex-grow">{children}</main>
+              </ProfileProvider>
+            ) : (
+              <>
+                <Navbar />
+                <main className="flex-grow">{children}</main>
+              </>
+            )}
+
+            {/* 🔽 Footer - Always visible */}
+            <footer className="bg-black text-white text-center text-sm py-4 mt-12 border-t border-gray-800">
+              <p>&copy; {new Date().getFullYear()} RentaLot. All rights reserved.</p>
+            </footer>
+          </body>
+        </html>
     </Providers>
   );
 }

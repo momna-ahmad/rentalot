@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { io, Socket } from "socket.io-client";
+import { useSocket } from "@/context/useSocketContext";
 import { useChat } from "@/context/useChatContext";
 
 export default function Chat({ current }: { current: string | undefined }) {
@@ -13,44 +13,37 @@ export default function Chat({ current }: { current: string | undefined }) {
     clearMessages,
   } = useChat();
 
+
   const [message, setMessage] = useState("");
-  const socketRef = useRef<Socket | null>(null);
+  //const socketRef = useRef<Socket | null>(null);
+  const { socket } = useSocket();
+  console.log('socket ' , socket);
 
   console.log("Chat component rendered");
 
-  // ✅ Setup socket connection once
-  useEffect(() => {
-    if (!socketRef.current) {
-      socketRef.current = io(`${process.env.NEXT_PUBLIC_API_URL}`, {
-        auth: { userId: current },
-      });
+    useEffect(() => {
+    if (!socket) return;
 
-      socketRef.current.on("connect", () => {
-        console.log("Connected with socket id:", socketRef.current?.id);
-      });
-    }
+    const handleReceiveMessage = ({ from, message }: { from: string; message: string }) => {
+      // Show message only if it belongs to the current chat
+      if (selectedChat && selectedChat.id === from) {
+        setMessages((prev) => [...prev, { sent: true, content: message }]);
+      }
+      else{
+        setMessages((prev) => [...prev, { sent: false, content: message }]);
+      }
+    };
+
+    socket.on("receive_private_message", handleReceiveMessage);
 
     return () => {
-      socketRef.current?.disconnect();
+      socket.off("receive_private_message", handleReceiveMessage);
     };
-  }, [current]);
+  }, [socket, selectedChat, setMessages]);
 
-  // ✅ Handle receiving private messages
   useEffect(() => {
-    if (selectedChat && socketRef.current) {
-      const handleReceiveMessage = ({ message }: { message: string }) => {
-        setMessages((prev) => [...prev, { sent: false, content: message }]);
-      };
-
-      socketRef.current.on("receive_private_message", handleReceiveMessage);
-
-      // ✅ Cleanup on chat switch or unmount
-      return () => {
-        socketRef.current?.off("receive_private_message", handleReceiveMessage);
-        clearMessages();
-      };
-    }
-  }, [selectedChat, setMessages]);
+  clearMessages();
+}, [selectedChat?.id]);
 
   // ✅ Send message handler
   const sendMessage = async (e: React.FormEvent) => {
@@ -58,7 +51,8 @@ export default function Chat({ current }: { current: string | undefined }) {
     if (message.trim() === "" || !selectedChat) return;
 
     // Emit message via socket
-    socketRef.current?.emit("send_private_message", {
+    //socketRef.current?.emit("send_private_message", {
+    socket?.emit("send_private_message", {
       message,
       to: selectedChat.id,
     });
