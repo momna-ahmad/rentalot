@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { auth } from '@/auth';
+import { CustomSessionUser } from '@/auth.config';
 
 export default async function UserListings() {
-  const session = await auth();
-  const id = session?.user?.id;
+   const session = await auth();
+   const user = session?.user as CustomSessionUser;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-listings/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-listings/${user.id}`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${(session?.user as any).token}`,

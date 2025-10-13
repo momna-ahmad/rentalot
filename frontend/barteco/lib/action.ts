@@ -7,8 +7,7 @@ import { AuthError  } from 'next-auth';
 import { signOut } from '@/auth';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import api from '@/hooks/axiosInstance';
-import { headers } from 'next/headers';
+import { CustomSessionUser } from '@/auth.config';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -34,19 +33,14 @@ export async function authenticate(
 }
 
 export async function signout(){
-  //await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
-  //  headers:{
-  //    withCredentials: 'include'
-  //  }
-  //});
+  
   return await signOut({ redirectTo: '/' });
 }
 
 export async function handleSubmit(prevState:  any ,
   formData: FormData) {
-  const session = await auth() ;
-  const id = session?.user?.id ;
-  
+  const session = await auth();
+  const user = session?.user as CustomSessionUser;
   const title = formData.get('title') as string ;
   const description = formData.get('description') as string
   const price = formData.get('price') as string
@@ -64,7 +58,7 @@ payload.append('category', category);
 payload.append('location', location);
 
 const files = formData.getAll('images') as File[];
-console.log('files' , files) ;
+
 // Append files
 files?.forEach((file) => {
   payload.append('images', file);
@@ -72,11 +66,11 @@ files?.forEach((file) => {
 
 console.log('payload' , payload) ;
   //not using application json becz backend cant read files as json
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-listings/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-listings/${user.id}`, {
     method: 'POST',
     headers:{
       
-      Authorization: `Bearer ${(session?.user as any).token}` ,
+      Authorization: `Bearer ${user.token}` ,
     },
     body: payload
   });
@@ -96,9 +90,10 @@ console.log('payload' , payload) ;
 }
 
 export async function handleBooking(prevState: any, formData: FormData) {
-  console.log('server action for booking');
+
   const { owner, booked } = prevState;
   const session = await auth();
+  const user = session?.user as CustomSessionUser;
 
   const listing = formData.get('listing')?.toString();
   const duration = Number(formData.get('duration')?.toString() || 0);
@@ -157,7 +152,7 @@ export async function handleBooking(prevState: any, formData: FormData) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${(session?.user as any).token}`,
+        Authorization: `Bearer ${user.token}`,
       },
       body: JSON.stringify({
         listing,
@@ -190,4 +185,47 @@ export async function handleBooking(prevState: any, formData: FormData) {
       error: 'Something went wrong. Please try again.',
     };
   }
+}
+
+export async function editProfile(prevState:  any ,
+  formData: FormData) {
+  const session = await auth();
+  const user = session?.user as CustomSessionUser;
+  
+  const name = formData.get('name') as string ;
+  const about = formData.get('about') as string
+  const phone = formData.get('phone') as string;
+
+const payload = new FormData();
+payload.append('name',  name);
+payload.append('about', about);
+payload.append('phone', phone );
+
+
+const file = formData.get('image') as File;
+// Append files
+//to allow for no profile pic
+  if (file && file.size > 0) {
+  payload.append('image', file);
+}
+
+
+  //not using application json becz backend cant read files as json
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/edit-profile`, {
+    method: 'POST',
+    headers:{
+      Authorization: `Bearer ${user.token}` ,
+    },
+    body: payload
+  });
+
+  if (!res.ok) {
+    
+    const {error} = await res.json(); // read error message
+    return error ;
+  }
+
+  // Optional: handle response
+  const result = await res.json();
+  return redirect('/dashboard/lister/profile') ;
 }

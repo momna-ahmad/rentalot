@@ -1,15 +1,17 @@
 // /lib/getProfile.ts
 import { redirect } from "next/navigation";
 import { auth } from '@/auth';
+import { CustomSessionUser } from "@/auth.config";
 
 export async function getProfile() {
     const session = await auth();
+    const user = session?.user as CustomSessionUser;
   try {
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-profile`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${(session?.user as any).token}`,
+        Authorization: `Bearer ${user.token}`,
       },
       cache: "no-store",
     });

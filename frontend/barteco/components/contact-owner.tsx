@@ -5,11 +5,14 @@ import { useRouter } from 'next/navigation';
 import api from "@/hooks/axiosInstance";
 import { useHandleInboxChange } from "./inbox-users";
 import { useSession } from 'next-auth/react';
+import { CustomSessionUser } from "@/auth.config";
 
 export default function ContactOwner({ ownerId }: { ownerId: string }) {
     const {replace} = useRouter();
     const handleInboxChange = useHandleInboxChange(); // use custom hook
     const { data: session } = useSession();
+      const user = session?.user as CustomSessionUser;
+    
 
     async function handleContactOwner() {
         //fetch owner info and set selected
@@ -17,7 +20,7 @@ export default function ContactOwner({ ownerId }: { ownerId: string }) {
         const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/inbox/${ownerId}` ,
             {
         headers: {
-          Authorization: `Bearer ${(session?.user as any).token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       }
         ) ;

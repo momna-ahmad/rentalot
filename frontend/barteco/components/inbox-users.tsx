@@ -4,12 +4,14 @@ import { use } from 'react';
 import { useChat } from '@/context/useChatContext';
 import api from '@/hooks/axiosInstance';
 import { useSession } from 'next-auth/react';
+import { CustomSessionUser } from '@/auth.config';
 
 // ✅ Define the custom hook (in the same file)
 export function useHandleInboxChange() {
   const { setSelectedChat, selectedChat, setMessages } = useChat();
   const { data: session } = useSession(); // ✅ must be inside the hook
-
+  const user = session?.user as CustomSessionUser;
+  
   const handleInboxChange = (inbox: any) => async () => {
     console.log(inbox)
     setSelectedChat({
@@ -25,7 +27,7 @@ export function useHandleInboxChange() {
       `${process.env.NEXT_PUBLIC_API_URL}/messages/${inbox.id}`,
       {
         headers: {
-          Authorization: `Bearer ${(session?.user as any).token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       } 
     );

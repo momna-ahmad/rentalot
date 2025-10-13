@@ -1,14 +1,15 @@
 import { auth } from "@/auth";
 import InboxUsers from "@/components/inbox-users";
 import Chat from "@/components/chat";
+import { CustomSessionUser } from "@/auth.config";
 
 export default async function Inbox() {
   const session = await auth();
-  console.log("session", session);
+  const user = session?.user as CustomSessionUser;
 
-  const res = fetch(`${process.env.NEXT_PUBLIC_API_URL}/inbox`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`, {
     headers: {
-      Authorization: `Bearer ${(session?.user as any).token}`,
+      Authorization: `Bearer ${user?.token}`,
     },
   }).then((res) => res.json());
 

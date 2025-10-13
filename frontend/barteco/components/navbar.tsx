@@ -7,7 +7,6 @@ import SwitchProfiles from './switch-profiles';
 
 export default async function Navbar() {
   const session = await auth();
-  console.log('User:', session?.user);
 
   return (
     <div className="flex items-center justify-between px-6 py-4  ">

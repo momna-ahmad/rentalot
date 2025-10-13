@@ -1,6 +1,4 @@
 import ProfileForm from "@/components/profile-form";
-import MyBookings from "@/components/bookings";
-import { auth } from "@/auth";
 
 export default async function Profile() {
   return (

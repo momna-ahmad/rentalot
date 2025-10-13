@@ -2,14 +2,16 @@
 import Bookings from "@/components/bookings";
 import { auth } from "@/auth";
 import api from "@/hooks/axiosInstance";
+import { CustomSessionUser } from "@/auth.config";
 
 export default async function Profile() {
   // fetch user bookings 
-  const session = await auth();
+   const session = await auth();
+   const user = session?.user as CustomSessionUser; 
 
   const response = await api.get('/my-bookings' , {
     headers: {
-      Authorization: `Bearer ${(session?.user as any).token}`,
+      Authorization: `Bearer ${user.token}`,
     },
   });
 
