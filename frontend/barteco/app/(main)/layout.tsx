@@ -2,11 +2,14 @@ import "./globals.css";
 import Navbar from "../../components/navbar";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { auth } from '@/auth';
+import { auth , signOut } from '@/auth';
 import ProfileProvider from '@/context/useProfileContext';
-
 import Providers from "@/lib/providers";
 import { redirect } from "next/navigation";
+
+
+// ✅ Import Inbox Icon from react-icons
+import { FaRegCommentDots } from "react-icons/fa";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +37,7 @@ export default async function RootLayout({
   if (session?.user != null) {
     console.log("fetching profile");
 
-    try {
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-profile`, {
         headers: {
           'Content-Type': 'application/json',
@@ -44,38 +47,48 @@ export default async function RootLayout({
       });
 
       if (!res.ok) {
-        profile = null;
-        redirect('/sign-in');
+        return redirect('/api/logout');
       }
 
+
       profile = await res.json();
-    } catch (err) {
-      console.error('Error fetching profile:', err);
-    }
+
   }
 
   return (
     <Providers session={session}>
-        <html lang="en">
-          <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
-            {session?.user != null ? (
-              <ProfileProvider value={profile}>
-                <Navbar />
-                <main className="flex-grow">{children}</main>
-              </ProfileProvider>
-            ) : (
-              <>
-                <Navbar />
-                <main className="flex-grow">{children}</main>
-              </>
-            )}
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
+          {session?.user != null ? (
+            <ProfileProvider value={profile}>
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+            </ProfileProvider>
+          ) : (
+            <>
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+            </>
+          )}
 
-            {/* 🔽 Footer - Always visible */}
-            <footer className="bg-black text-white text-center text-sm py-4 mt-12 border-t border-gray-800">
-              <p>&copy; {new Date().getFullYear()} RentaLot. All rights reserved.</p>
+          {/* ✅ Floating Inbox Button */}
+          {session?.user != null && (
+            <a
+              href="/dashboard/inbox"
+              className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-colors flex items-center justify-center z-50"
+              aria-label="Go to Inbox"
+            >
+              <FaRegCommentDots className="w-6 h-6" />
+            </a>
+          )}
+
+          {/* ✅ Footer */}
+          <footer className="bg-gray-100 text-black text-center text-sm py-4 mt-12 border-t border-gray-300">
+            <p>&copy; {new Date().getFullYear()} RentaLot. All rights reserved.</p>
             </footer>
-          </body>
-        </html>
+
+        </body>
+      </html>
     </Providers>
   );
 }

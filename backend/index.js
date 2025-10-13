@@ -57,42 +57,47 @@ io.use((socket, next) => {
 
 
 io.on('connection', (socket) => {
-  console.log('a user connected' , socket.id);
-  
-  //const userId = socket.data.userId;
   const userId = socket.userId;
 
-
+  // ✅ Track user connections
   if (!onlineUsers.has(userId)) {
     onlineUsers.set(userId, new Set());
   }
   onlineUsers.get(userId).add(socket.id);
 
-  console.log(`User ${userId} connected with socket ${socket.id}`);
-  console.log('online users' ,onlineUsers);
-  
-  // Handle sending message
-  // listen for private messages
+  console.log(`✅ User ${userId} connected (${socket.id})`);
+  console.log('Current online users:', onlineUsers);
+
+  // ✅ Listen for private messages
   socket.on("send_private_message", ({ message, to }) => {
-  console.log("Message from", userId, "to", to, ":", message);
+    console.log("📨 Message from", userId, "to", to, ":", message);
 
-  const targetSockets = onlineUsers.get(String(to));
-  console.log('targetSockets' , targetSockets);
-  if (targetSockets) {
-    targetSockets.forEach((socketId) => {
-      console.log('emitting to socketId' , socketId) ;
-      io.to(socketId).emit("receive_private_message", {
-        message,
-        from: userId,
+    const targetSockets = onlineUsers.get(String(to));
+    if (targetSockets) {
+      targetSockets.forEach((socketId) => {
+        io.to(socketId).emit("receive_private_message", { message, from: userId });
       });
-    });
-  }
- });
+    }
+  });
 
+  // ✅ When socket disconnects
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+
+    // Remove this socket from the user’s set
+    const userSockets = onlineUsers.get(userId);
+    if (userSockets) {
+      userSockets.delete(socket.id);
+
+      // If user has no sockets left, remove them entirely
+      if (userSockets.size === 0) {
+        onlineUsers.delete(userId);
+      }
+    }
+
+    console.log('Updated online users:', onlineUsers);
   });
 });
+
 
 
 

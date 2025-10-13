@@ -26,4 +26,45 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ===== Custom DatePicker Styles ===== */
+.react-datepicker {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter', sans-serif;
+}
+
+.react-datepicker__header {
+  background-color: #f9fafb !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* Booked days */
+.booked-day {
+  background-color: #fecaca !important; /* red-200 */
+  color: #7f1d1d !important; /* red-900 */
+  border-radius: 0.5rem !important;
+  cursor: not-allowed !important;
+  font-weight: 500;
+}
+
+/* Available days */
+.available-day:hover {
+  background-color: #e5e7eb !important; /* gray-200 */
+  border-radius: 0.5rem !important;
+}
+
+/* Disabled booked day hover fix */
+.booked-day:hover {
+  background-color: #fecaca !important;
+}
+
+/* Legend consistency */
+.legend-box {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  background-color: #fecaca;
+}
+
 

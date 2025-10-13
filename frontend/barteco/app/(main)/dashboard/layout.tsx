@@ -1,7 +1,6 @@
 import "../formStyles.css"
 import Navbar from "../../../components/navbar";
 import Link from "next/link";
-import { MessageCircle } from "lucide-react"; // nice chat icon
 
 export const metadata = {
   title: 'Next.js',
@@ -16,13 +15,6 @@ export default function RootLayout({
   return (
     <>
     {children}
-    
-      <Link
-        href="/dashboard/inbox"
-        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition flex items-center justify-center"
-      >
-        <MessageCircle className="w-6 h-6" />
-      </Link>
     </>   
   )
 }

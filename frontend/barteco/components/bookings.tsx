@@ -13,9 +13,9 @@ export interface Booking {
   listing: Listing;
 }
 
-export default function MyBookings({ bookingsPromise }: { bookingsPromise: Promise<Booking[]> }) {
-  const bookings = use(bookingsPromise);
+export default function Bookings({ bookings , text }: { bookings: Booking[] , text?: string }) {
 
+  console.log("Bookings:", bookings);
   if (!bookings || bookings.length === 0) {
     return (
       <div className="p-6 text-center text-gray-500">
@@ -26,7 +26,7 @@ export default function MyBookings({ bookingsPromise }: { bookingsPromise: Promi
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">My Bookings</h2>
+      <h2 className="text-2xl font-bold mb-6">{text}</h2>
       <div className="flex flex-col space-y-6">
         {bookings.map((booking, index) => (
           <article

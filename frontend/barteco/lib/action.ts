@@ -95,59 +95,62 @@ console.log('payload' , payload) ;
   return redirect('/dashboard/lister') ;
 }
 
-export async function editProfile(prevState:  any ,
-  formData: FormData) {
-  const session = await auth() ;
-  
-  const name = formData.get('name') as string ;
-  const about = formData.get('about') as string
-  const phone = formData.get('phone') as string;
-
-const payload = new FormData();
-payload.append('name',  name);
-payload.append('about', about);
-payload.append('phone', phone );
-
-
-const file = formData.get('image') as File;
-// Append files
-//to allow for no profile pic
-  if (file && file.size > 0) {
-  payload.append('image', file);
-}
-
-
-  //not using application json becz backend cant read files as json
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/edit-profile`, {
-    method: 'POST',
-    headers:{
-      Authorization: `Bearer ${(session?.user as any).token}` ,
-    },
-    body: payload
-  });
-
-  if (!res.ok) {
-    
-    const {error} = await res.json(); // read error message
-    return error ;
-  }
-
-  // Optional: handle response
-  const result = await res.json();
-  return redirect('/dashboard/lister/profile') ;
-}
-
 export async function handleBooking(prevState: any, formData: FormData) {
   console.log('server action for booking');
-
+  const { owner, booked } = prevState;
   const session = await auth();
+
   const listing = formData.get('listing')?.toString();
-  const duration = formData.get('duration')?.toString();
-  const start_date_time = formData.get('start')?.toString();
+  const duration = Number(formData.get('duration')?.toString() || 0);
+  const startStr = formData.get('start')?.toString();
   const unit = formData.get('unit')?.toString();
   const cost = formData.get('cost')?.toString();
 
-  console.log(duration, start_date_time, unit, cost);
+  if (!startStr || !duration || !unit) {
+    return { ...prevState, error: 'Invalid booking details.' };
+  }
+
+  const start = new Date(startStr);
+  const end =
+    unit === 'day'
+      ? new Date(start.getTime() + duration * 24 * 60 * 60 * 1000)
+      : new Date(start.getTime() + duration * 60 * 60 * 1000);
+
+  // ✅ Normalize times for day-based bookings
+  const normalizedStart = new Date(start);
+  const normalizedEnd = new Date(end);
+  if (unit === 'day') {
+    normalizedStart.setHours(0, 0, 0, 0);
+    normalizedEnd.setHours(23, 59, 59, 999);
+  }
+
+  // ✅ Overlap check (handles both hour and day cases)
+  const overlap = booked?.some((b: any) => {
+    const bStart = new Date(b.start_date_time);
+    const bEnd = new Date(b.end_date_time);
+
+    if (unit === 'day') {
+      // Compare only dates (ignore hours)
+      const bookingStart = new Date(bStart);
+      const bookingEnd = new Date(bEnd);
+      bookingStart.setHours(0, 0, 0, 0);
+      bookingEnd.setHours(23, 59, 59, 999);
+      return normalizedStart <= bookingEnd && normalizedEnd >= bookingStart;
+    } else {
+      // Compare exact time ranges (hour slots)
+      return start < bEnd && end > bStart;
+    }
+  });
+
+  if (overlap) {
+    return {
+      ...prevState,
+      error:
+        unit === 'day'
+          ? 'This date overlaps with an existing booking.'
+          : 'This time slot overlaps with an existing booking.',
+    };
+  }
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/book-listing`, {
@@ -158,8 +161,10 @@ export async function handleBooking(prevState: any, formData: FormData) {
       },
       body: JSON.stringify({
         listing,
-        duration: Number(duration),
-        start: start_date_time,
+        owner,
+        duration,
+        start: start.toISOString(),
+        end: end.toISOString(),
         unit,
         cost,
       }),
@@ -170,11 +175,9 @@ export async function handleBooking(prevState: any, formData: FormData) {
       return {
         ...prevState,
         error: errorData.error?.message || 'Failed to book listing',
-        
       };
     }
 
-    // Success
     return {
       ...prevState,
       error: null,

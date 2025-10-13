@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import DisplayImg from './display-images';
 import { auth } from '@/auth';
 
 export default async function UserListings() {
@@ -15,7 +14,6 @@ export default async function UserListings() {
   });
 
   const listings = await res.json();
-  console.log('listings', listings);
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">

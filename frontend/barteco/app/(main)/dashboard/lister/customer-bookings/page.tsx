@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
-import MyBookings from "@/components/my-bookings";
+import ListingBookingsCalendar from "@/components/listing-bookings-calender";
+import api from "@/hooks/axiosInstance";
 
 export default async function CustomerBookings(){
 
@@ -7,15 +8,16 @@ export default async function CustomerBookings(){
       const session = await auth();
       console.log("session", session);
     
-      const res = fetch(`${process.env.NEXT_PUBLIC_API_URL}/customer-bookings`, {
+      const res = await api.get('/customer-bookings', {
         headers: {
           Authorization: `Bearer ${(session?.user as any).token}`,
         },
-      }).then((res) => res.json());
-    
+      });
+
+      console.log('customer bookings ' , res.data) ;
     return (
         <>
-        <MyBookings bookingsPromise={res}/>
+        <ListingBookingsCalendar bookings={res.data}/>
         </>
     )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useActionState, useState } from 'react';
+import { useContext, useActionState, useState , useEffect } from 'react';
 import { ProfileContext } from '@/context/useProfileContext';
 import Image from 'next/image';
 import { editProfile } from '@/lib/action';
@@ -8,7 +8,7 @@ import { editProfile } from '@/lib/action';
 export default function ProfileForm() {
   const profile = useContext(ProfileContext);
 
-  const [error, formAction, isPending] = useActionState(editProfile, null);
+  const [state, formAction, isPending] = useActionState(editProfile, null);
 
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -29,9 +29,9 @@ export default function ProfileForm() {
       action={formAction}
       className="w-full max-w-2xl mx-auto p-8 bg-white rounded-xl shadow space-y-6"
     >
-      {error && (
+      {state?.error && (
         <div className="text-red-600 bg-red-100 px-4 py-2 rounded">
-          {error}
+          {state?.error}
         </div>
       )}
 

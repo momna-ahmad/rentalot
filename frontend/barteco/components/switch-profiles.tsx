@@ -1,39 +1,35 @@
-'use client'
-import Link from "next/link";
-import { usePathname , useRouter } from "next/navigation"
+'use client';
+import { usePathname, useRouter } from 'next/navigation';
 
-export default function SwitchProfiles(){
-    const path = usePathname() ;
-      const router = useRouter()
+export default function SwitchProfiles() {
+  const path = usePathname();
+  const router = useRouter();
 
-    const navigateToBrowsing =( )=>{
-        //router.replace('/dashboard/customer')
-        router.replace('/')
-    }
+  const navigateToBrowsing = () => {
+    router.replace('/');
+  };
 
-    const navigateToDashboard =( )=>{
-        router.replace('/dashboard/lister') ;
-    }
+  const navigateToDashboard = () => {
+    router.replace('/dashboard/lister');
+  };
 
-    return (
-        <>
-        {
-            path.includes('/lister') ? 
-             
-            <button onClick={navigateToBrowsing}>
-                Switch to browsing
-            </button>
-
-            :
-            
-            <button onClick={navigateToDashboard}>
-                Switch to listing
-            </button>
-            
-        }
-        <button>
-            
+  return (
+    <div className="flex gap-4">
+      {path.includes('/lister') ? (
+        <button
+          onClick={navigateToBrowsing}
+          className="px-4 py-2 bg-white text-black rounded-md hover:bg-gray-100 transition-colors"
+        >
+          Switch to browsing
         </button>
-        </>
-    )
+      ) : (
+        <button
+          onClick={navigateToDashboard}
+          className="px-4 py-2 bg-white text-black rounded-md hover:bg-gray-100 transition-colors"
+        >
+          Switch to listing
+        </button>
+      )}
+    </div>
+  );
 }

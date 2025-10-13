@@ -3,21 +3,24 @@
 import React, { useState, useActionState , useEffect } from 'react';
 import BookingCalendar from './booking-calender';
 import { handleBooking } from '@/lib/action';
-import { Booking } from './my-bookings';
+import { Booking } from './bookings';
 
-export default function BookListing({ id, unit, cost , bookings }: { id: string; unit: string , cost: number , bookings:Booking[] }) {
+export default function BookListing({ id, owner , unit, cost , bookings }: { id: string , owner: string, unit: string , cost: number , bookings:Booking[] }) {
   const [showModal, setShowModal] = useState(false);
   const [duration, setDuration] = useState('');
   const [startDateTime, setStartDateTime] = useState<string | null>(null);
 
-  const initialState = {
-    duration: '',
-    start: '',
-    unit ,
-    listing: id,
-    cost: cost ,
-    error: null,
-  };
+  const initialState = { 
+  duration: '',
+  start: '',
+  unit,
+  owner,
+  listing: id,
+  cost,
+  booked: bookings, // Pass all current bookings here to check if selected booking doesnt overlap with previous ones 
+  error: null,
+};
+
 
   const [state, formAction, isPending] = useActionState(handleBooking, initialState);
 
@@ -51,13 +54,14 @@ export default function BookListing({ id, unit, cost , bookings }: { id: string;
           <form
             action={formAction}
             className="relative bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6"
-            onSubmit={() => {
+            onSubmit={(e) => {
               if (!duration || !startDateTime) {
+                e.preventDefault();
                 alert('Please select both duration and a date/time.');
-              } else {
-                setShowModal(false); // Close on valid submission
+                return;
               }
-            }}
+              setShowModal(false); // Close modal only on valid submission
+              }}
           >
             {/* Close (X) button */}
             <button

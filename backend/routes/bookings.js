@@ -7,7 +7,7 @@ const router = express.Router() ;
 
 router.post('/book-listing', authenticate, async (req, res) => {
     const user = await fetchUser(req.user.sub);
-    const { listing, unit, start, duration , cost} = req.body;
+    const { listing, unit, owner, start, duration , cost} = req.body;
 
     const total_cost = cost*duration ;
     let start_date_time = new Date(start); // 'start' is in ISO/timestamptz format
@@ -32,6 +32,7 @@ router.post('/book-listing', authenticate, async (req, res) => {
                 start_date_time,
                 end_date_time,
                 duration,
+                owner,
                 cost: total_cost
             }
         ]);
@@ -72,7 +73,6 @@ router.get('/customer-bookings' , authenticate , async(req , res)=>{
   .gte('start_date_time', new Date().toISOString())
   .order('start_date_time', { ascending: true });
 
-  console.log(data) ;
   return res.status(200).json(data) ;
 });
 
