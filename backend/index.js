@@ -33,10 +33,9 @@ io.use((socket, next) => {
 app.use(cors({
   origin: 'https://rentalot-snlf.vercel.app',
   credentials: true, // ✅ allow cookies
-   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 
-app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
