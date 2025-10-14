@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { DateSelectArg } from '@fullcalendar/core';
+import { DateSelectArg } from './book-listing';
 import { Booking } from './bookings';
 
 export default function BookingCalendar({
@@ -75,8 +75,8 @@ export default function BookingCalendar({
         startStr: localISOString,
         endStr: localISOString,
         allDay: unit === 'day',
-        jsEvent: null as any,
-        view: { type: unit } as any,
+        jsEvent: null,
+        view: { type: unit },
       });
     }
   }, [selectedDate, selectedTime, unit]);

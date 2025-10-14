@@ -143,7 +143,7 @@ export async function handleBooking(prevState: HandleBookingState , formData: Fo
   }
 
   // ✅ Overlap check (handles both hour and day cases)
-  const overlap = booked?.some((b: any) => {
+  const overlap = booked?.some((b: Booking) => {
     const bStart = new Date(b.start_date_time);
     const bEnd = new Date(b.end_date_time);
 

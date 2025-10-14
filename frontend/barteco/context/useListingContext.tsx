@@ -8,7 +8,10 @@ export interface Listing{
     description : string ,
     price : number ,
     unit : string ,
-    category : string
+    category : string ,
+    location : string ,
+    img_urls : string[]
+    user_id : string
 }
 export const ListingContext = createContext<Listing | null>(null);
  

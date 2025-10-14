@@ -37,12 +37,12 @@ export default function Bookings({ bookings , text }: { bookings: Booking[] , te
 
             <div className="text-sm text-gray-600 mb-3 flex items-center gap-2">
               <svg className="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M8 7V3M16 7V3M3 11h18M5 21h14a2 2 0 0 0 2-2v-7H3v7a2 2 0 0 0 2 2z"/></svg>
-              <time dateTime={booking.start_date_time as any}>
-                {format(new Date(booking.start_date_time as any), 'PPP p')}
+              <time dateTime={booking.start_date_time }>
+                {format(new Date(booking.start_date_time), 'PPP p')}
               </time>
               <span className="text-gray-400">→</span>
-              <time dateTime={booking.end_date_time as any}>
-                {format(new Date(booking.end_date_time as any), 'PPP p')}
+              <time dateTime={booking.end_date_time}>
+                {format(new Date(booking.end_date_time), 'PPP p')}
               </time>
             </div>
 

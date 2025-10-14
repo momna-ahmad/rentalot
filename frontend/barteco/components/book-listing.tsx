@@ -5,6 +5,21 @@ import BookingCalendar from './booking-calender';
 import { handleBooking } from '@/lib/action';
 import { Booking } from './bookings';
 
+// types/calendar.ts
+export interface CalendarView {
+  type: string;
+}
+
+export interface DateSelectArg {
+  start: Date;
+  end: Date;
+  startStr: string;
+  endStr: string;
+  allDay: boolean;
+  jsEvent: React.MouseEvent | null;
+  view: CalendarView;
+}
+
 export default function BookListing({ id, owner , unit, cost , bookings }: { id: string , owner: string, unit: string , cost: number , bookings:Booking[] }) {
   const [showModal, setShowModal] = useState(false);
   const [duration, setDuration] = useState('');
@@ -34,7 +49,7 @@ export default function BookListing({ id, owner , unit, cost , bookings }: { id:
   }
 }, [state?.error, isPending]);
 
-  const handleDateSelect = (selectInfo: any) => {
+  const handleDateSelect = (selectInfo: DateSelectArg) => {
     const start = selectInfo.startStr;
     setStartDateTime(start);
   };

@@ -7,8 +7,11 @@ import ProfileProvider from '@/context/useProfileContext';
 import Providers from "@/lib/providers";
 import { redirect } from "next/navigation";
 
+
 // ✅ Import Inbox Icon from react-icons
 import { FaRegCommentDots } from "react-icons/fa";
+import { CustomSessionUser } from "@/auth.config";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +34,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+  const user = session?.user as CustomSessionUser;
   let profile = null;
 
   if (session?.user != null) {
@@ -40,7 +44,7 @@ export default async function RootLayout({
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-profile`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${(session?.user as any).token}`,
+          Authorization: `Bearer ${user.token}`,
         },
         cache: 'no-store',
       });
@@ -72,13 +76,13 @@ export default async function RootLayout({
 
           {/* ✅ Floating Inbox Button */}
           {session?.user != null && (
-            <a
+            <Link
               href="/dashboard/inbox"
               className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-colors flex items-center justify-center z-50"
               aria-label="Go to Inbox"
             >
               <FaRegCommentDots className="w-6 h-6" />
-            </a>
+            </Link>
           )}
 
           {/* ✅ Footer */}

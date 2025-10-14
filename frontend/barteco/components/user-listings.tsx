@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { auth } from '@/auth';
 import { CustomSessionUser } from '@/auth.config';
+import { Listing } from '@/context/useListingContext';
+
 
 export default async function UserListings() {
    const session = await auth();
@@ -9,7 +11,7 @@ export default async function UserListings() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-user-listings/${user.id}`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${(session?.user as any).token}`,
+      Authorization: `Bearer ${user.token}`,
     },
     cache: 'no-store',
   });
@@ -21,7 +23,7 @@ export default async function UserListings() {
       {listings.length === 0 ? (
         <div className="text-center text-gray-600">You have no listings yet.</div>
       ) : (
-        listings.map((listing: any) => (
+        listings.map((listing: Listing) => (
           <div
             key={listing.id}
             className="group/item flex items-start gap-4 border border-gray-300 rounded-lg shadow-sm p-6 hover:shadow-md transition duration-200 bg-white"

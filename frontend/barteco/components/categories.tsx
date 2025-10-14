@@ -21,7 +21,7 @@ export default function Categories({listings} : {listings : Listing[]}) {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  let selectedCategory = searchParams.get('category') || '';
+  const selectedCategory = searchParams.get('category') || '';
 
   const handleCategoryChange = (category: string) => {
     const params = new URLSearchParams(searchParams.toString());
