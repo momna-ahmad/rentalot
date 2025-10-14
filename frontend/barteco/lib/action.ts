@@ -40,6 +40,7 @@ export async function authenticate(
       await signIn('credentials', formData);
     
   } catch (error) {
+    console.log("Error in sign in: ", error);
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
