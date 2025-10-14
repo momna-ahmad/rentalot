@@ -20,7 +20,7 @@ export const { auth, signIn, signOut } = NextAuth({
       const { email, password, token } = credentials || {};
       if(token && !email && !password)
       {
-
+        console.log("Google sign in with token: ", token);
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/google-sign-in`,{
           method: 'post' ,
           headers: {
@@ -40,6 +40,8 @@ export const { auth, signIn, signOut } = NextAuth({
       }
       
     }
+    console.log("Email sign in with email: ", email);
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sign-in`, {
         method: 'POST',
         headers: {

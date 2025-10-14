@@ -33,6 +33,7 @@ io.use((socket, next) => {
 app.use(cors({
   origin: 'https://rentalot-snlf.vercel.app',
   credentials: true, // ✅ allow cookies
+  methods: ['GET', 'POST'],
 }));
 
 app.use(express.json());
