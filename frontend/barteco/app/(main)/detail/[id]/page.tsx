@@ -4,16 +4,15 @@ import Link from "next/link";
 import BookListing from "@/components/book-listing";
 import ContactOwner from "@/components/contact-owner";
 
-type Params = {
-  params: {
-    id: string;
-  };
-};
 
-export default async function ListingDetail({ params }: Params) {
+export default async function ListingDetail(props: {
+  params: Promise<{ id: string }>;
+}) {
+
+  const { id } = await props.params;
   const [listingRes, bookingsRes] = await Promise.all([
-    api.get(`${process.env.NEXT_PUBLIC_API_URL}/listing-detail/${params.id}`),
-    api.get(`${process.env.NEXT_PUBLIC_API_URL}/bookings-for-listing/${params.id}`)
+    api.get(`${process.env.NEXT_PUBLIC_API_URL}/listing-detail/${id}`),
+    api.get(`${process.env.NEXT_PUBLIC_API_URL}/bookings-for-listing/${id}`)
   ]);
 
   const { listing } = listingRes.data;
@@ -68,7 +67,7 @@ export default async function ListingDetail({ params }: Params) {
           </Link>
 
           <BookListing
-            id={params.id}
+            id={id}
             owner= {listing.owner}
             unit={listing.unit}
             cost={listing.price}

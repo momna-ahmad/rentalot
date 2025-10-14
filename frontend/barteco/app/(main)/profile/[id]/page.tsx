@@ -1,14 +1,13 @@
 import Image from "next/image";
 import api from "@/hooks/axiosInstance";
 
-type Params = {
-  params: {
-    id: string;
-  };
-};
 
-export default async function Profile({ params }: Params) {
-  const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/get-profile/${params.id}`);
+export default async function Profile(props: {
+  params: Promise<{ id: string }>;
+}) {
+
+  const { id } = await props.params;
+  const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/get-profile/${id}`);
   const { profile } = res.data;
 
   return (
