@@ -52,6 +52,7 @@ export const { auth, signIn, signOut } = NextAuth({
         }),
       }
       );
+      console.log("Response from sign-in: ", res);
       
       if(!res) {
             console.error('sign-in failed - Status:', res);
