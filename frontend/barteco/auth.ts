@@ -42,16 +42,17 @@ export const { auth, signIn, signOut } = NextAuth({
     }
     console.log("Email sign in with email: ", email);
 
-      const res = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/sign-in`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: credentials?.email,
-          password: credentials?.password,
-        }),
-      }
-      );
+      const res = await api.post(
+  `${process.env.NEXT_PUBLIC_API_URL}/sign-in`,
+  {
+    email: credentials?.email,
+    password: credentials?.password,
+  },
+  {
+    headers: { 'Content-Type': 'application/json' },
+  }
+);
+
       console.log("Response from sign-in: ", res);
       
       if(!res) {
