@@ -42,16 +42,17 @@ export const { auth, signIn, signOut } = NextAuth({
     }
     console.log("Email sign in with email: ", email);
 
-      const res = await api.post(
-  '/sign-in',
-  {
-    email: credentials?.email,
-    password: credentials?.password,
-  },
-  {
-    headers: { 'Content-Type': 'application/json' },
-  }
-);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sign-in`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: credentials?.email,
+        password: credentials?.password,
+      }),
+      redirect: 'manual', // ✅ Prevent automatic redirects
+    });
 
       console.log("Response from sign-in: ", res);
       
@@ -61,8 +62,8 @@ export const { auth, signIn, signOut } = NextAuth({
           }
       else
       {
-        //const { user  } = await res.json();
-        const user = res.data.user ;
+        const { user  } = await res.json();
+        
          console.log("User from sign-in: ", user);
         //stored in auth for sessions
         return user;
