@@ -43,7 +43,7 @@ export const { auth, signIn, signOut } = NextAuth({
     console.log("Email sign in with email: ", email);
 
       const res = await api.post(
-  `${process.env.NEXT_PUBLIC_API_URL}/sign-in`,
+  '/sign-in',
   {
     email: credentials?.email,
     password: credentials?.password,
