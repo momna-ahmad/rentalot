@@ -13,7 +13,7 @@ export const SocketProvider = ({
   userId,
   children,
 }: {
-  userId: string;
+  userId: string | null;
   children: React.ReactNode;
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);

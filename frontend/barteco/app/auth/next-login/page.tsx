@@ -23,7 +23,6 @@ export default function NextLogin() {
       const access_token = params.get('access_token')
       const refresh_token = params.get('refresh_token')
 
-      console.log(access_token) ;
       if (access_token && refresh_token) {
         await supabase.auth.setSession({ access_token, refresh_token })
 

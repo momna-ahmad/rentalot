@@ -8,6 +8,29 @@ import { signOut } from '@/auth';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { CustomSessionUser } from '@/auth.config';
+import { Booking } from '@/components/bookings';
+
+interface HandleSubmitState {
+  title?: string;
+  description?: string;
+  price?: string;
+  unit?: string;
+  category?: string;
+  location?: string;
+  error?: string | null;
+}
+
+interface HandleBookingState {
+  owner?: string;
+  booked?: Booking[]; // You might want to create a more specific type for bookings
+  error?: string | undefined;
+  success?: boolean;
+  listing?: string;
+  duration?: string;
+  start?: string;
+  unit?: string;
+  cost?: string;
+}
 
 export async function authenticate(
   prevState: string | undefined,
@@ -37,7 +60,7 @@ export async function signout(){
   return await signOut({ redirectTo: '/' });
 }
 
-export async function handleSubmit(prevState:  any ,
+export async function handleSubmit(prevState:  HandleSubmitState | undefined ,
   formData: FormData) {
   const session = await auth();
   const user = session?.user as CustomSessionUser;
@@ -89,7 +112,7 @@ console.log('payload' , payload) ;
   return redirect('/dashboard/lister') ;
 }
 
-export async function handleBooking(prevState: any, formData: FormData) {
+export async function handleBooking(prevState: HandleBookingState , formData: FormData) {
 
   const { owner, booked } = prevState;
   const session = await auth();
@@ -175,7 +198,6 @@ export async function handleBooking(prevState: any, formData: FormData) {
 
     return {
       ...prevState,
-      error: null,
       success: true,
     };
   } catch (err) {
@@ -187,7 +209,7 @@ export async function handleBooking(prevState: any, formData: FormData) {
   }
 }
 
-export async function editProfile(prevState:  any ,
+export async function editProfile(
   formData: FormData) {
   const session = await auth();
   const user = session?.user as CustomSessionUser;

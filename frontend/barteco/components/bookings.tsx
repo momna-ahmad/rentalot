@@ -1,7 +1,6 @@
 'use client';
 
 import { Listing } from "@/context/useListingContext";
-import { use } from "react";
 
 import { format } from "date-fns";
 
@@ -15,7 +14,6 @@ export interface Booking {
 
 export default function Bookings({ bookings , text }: { bookings: Booking[] , text?: string }) {
 
-  console.log("Bookings:", bookings);
   if (!bookings || bookings.length === 0) {
     return (
       <div className="p-6 text-center text-gray-500">

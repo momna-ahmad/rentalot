@@ -16,9 +16,9 @@ export default function BookListing({ id, owner , unit, cost , bookings }: { id:
   unit,
   owner,
   listing: id,
-  cost,
+  cost : cost.toString(),
   booked: bookings, // Pass all current bookings here to check if selected booking doesnt overlap with previous ones 
-  error: null,
+  error: undefined,
 };
 
 

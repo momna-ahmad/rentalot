@@ -12,7 +12,7 @@ export function useHandleInboxChange() {
   const { data: session } = useSession(); // ✅ must be inside the hook
   const user = session?.user as CustomSessionUser;
   
-  const handleInboxChange = (inbox: any) => async () => {
+  const handleInboxChange = (inbox: InboxUser) => async () => {
     console.log(inbox)
     setSelectedChat({
       id: inbox.otherUser.id,
@@ -21,8 +21,7 @@ export function useHandleInboxChange() {
     });
     
     if(inbox.id){
-      console.log('fetching messages for inbox') ;
-      // ✅ Fetch previous messages
+      // fetch previous messages
     const res = await api.get(
       `${process.env.NEXT_PUBLIC_API_URL}/messages/${inbox.id}`,
       {
@@ -40,8 +39,16 @@ export function useHandleInboxChange() {
   return handleInboxChange;
 }
 
+interface InboxUser{
+  id: string;
+  otherUser: {
+    id: string;
+    name: string;
+  };
+}
+
 // ✅ Your main component
-export default function InboxUsers({ inbox }: { inbox: Promise<any[]> }) {
+export default function InboxUsers({ inbox }: { inbox: Promise<InboxUser[]> }) {
   const inboxData = use(inbox);
   const { selectedChat } = useChat();
   const handleInboxChange = useHandleInboxChange(); // use custom hook
@@ -68,19 +75,6 @@ export default function InboxUsers({ inbox }: { inbox: Promise<any[]> }) {
                 <p className="text-lg font-medium">
                   {chat.otherUser?.name ?? 'Unknown User'}
                 </p>
-                {chat.lastMessage && (
-                  <p className="text-sm text-gray-500 truncate">
-                    {chat.lastMessage}
-                  </p>
-                )}
-              </div>
-              <div className="text-gray-400 text-sm">
-                {chat.updated_at
-                  ? new Date(chat.updated_at).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })
-                  : ''}
               </div>
             </div>
           );

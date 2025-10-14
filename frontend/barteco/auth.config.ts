@@ -1,4 +1,4 @@
-import type { NextAuthConfig } from 'next-auth';
+import type { NextAuthConfig, Session } from 'next-auth';
 
 // Define custom types for your user and token
 interface CustomUser {
@@ -15,12 +15,12 @@ interface CustomToken {
   token?: string;
 }
 
-export interface CustomSessionUser {
+export interface CustomSessionUser{
   id?: string;
   email?: string;
   role?: string;
   token?: string;
-  name?: string;
+  name?: string; 
   image?: string;
 }
 
