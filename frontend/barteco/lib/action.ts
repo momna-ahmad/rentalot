@@ -2,9 +2,8 @@
 
 //server actions for sign in 
 
-import { signIn } from '@/auth' ;
+import { signIn , signOut} from '@/auth' ;
 import { AuthError  } from 'next-auth';
-import { signOut } from '@/auth';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { CustomSessionUser } from '@/auth.config';
@@ -38,7 +37,7 @@ export async function authenticate(
 ) {
   
   try {
-     const result = await signIn('credentials', formData);
+      await signIn('credentials', formData);
     
   } catch (error) {
     if (error instanceof AuthError) {
