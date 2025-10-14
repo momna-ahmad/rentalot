@@ -3,17 +3,15 @@ import DisplayImg from "@/components/display-images";
 import ListingProvider from "@/context/useListingContext";
 import ListingBookingsCalendar from "@/components/listing-bookings-calender";
 
-interface PageProps {
-  params: { id: string };
-}
-
 function capitalizeFirstWord(str: string) {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export default async function Listing({ params }: PageProps) {
-  const { id } = await params;
+export default async function Listing(props: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await props.params;
 
   const [listingRes, bookingRes] = await Promise.all([
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listing/${id}`, {
