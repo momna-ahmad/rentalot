@@ -14,7 +14,7 @@ const server = createServer(app);
 const io = new Server(server,{
   connectionStateRecovery: {},
   cors:{
-    origin: 'https://rentalot-snlf.vercel.app/',
+    origin: 'https://rentalot-snlf.vercel.app',
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -31,7 +31,7 @@ io.use((socket, next) => {
 
 
 app.use(cors({
-  origin: 'https://rentalot-snlf.vercel.app/',
+  origin: 'https://rentalot-snlf.vercel.app',
   credentials: true, // ✅ allow cookies
 }));
 
