@@ -42,8 +42,7 @@ export const { auth, signIn, signOut } = NextAuth({
     }
     console.log("Email sign in with email: ", email);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sign-in`, {
-        method: 'POST',
+      const res = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/sign-in`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -53,15 +52,15 @@ export const { auth, signIn, signOut } = NextAuth({
         }),
       }
       );
-      if(!res.ok) {
-            console.error('sign-in failed - Status:', res.status);
-            const errorText = await res.text();
-            console.error('sign-in error response:', errorText);
+      
+      if(!res) {
+            console.error('sign-in failed - Status:', res);
             return null;
           }
       else
       {
-        const { user  } = await res.json();
+        //const { user  } = await res.json();
+        const user = res.data.user ;
          console.log("User from sign-in: ", user);
         //stored in auth for sessions
         return user;
