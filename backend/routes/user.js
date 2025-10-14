@@ -47,6 +47,15 @@ router.post('/sign-up', async (req, res) => {
  
 }) ;
 
+// In routes/user.js - add this GET route
+router.get('/sign-in', (req, res) => {
+  console.log('✅ GET /sign-in route hit (for NextAuth)');
+  res.status(200).json({ 
+    message: 'Auth endpoint ready',
+    // You can include any required auth info here
+  });
+});
+
 router.post('/sign-in',  async (req, res) => {
   console.log('sign-in route hit');
     const { email, password } = req.body;
