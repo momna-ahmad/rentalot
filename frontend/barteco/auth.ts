@@ -53,8 +53,12 @@ export const { auth, signIn, signOut } = NextAuth({
         }),
       }
       );
-      if(!res)
-        return null;
+      if(!res.ok) {
+            console.error('sign-in failed - Status:', res.status);
+            const errorText = await res.text();
+            console.error('sign-in error response:', errorText);
+            return null;
+          }
       else
       {
         const { user  } = await res.json();
