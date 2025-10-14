@@ -13,7 +13,7 @@ function capitalizeFirstWord(str: string) {
 }
 
 export default async function Listing({ params }: PageProps) {
-  const { id } = params;
+  const { id } = await params;
 
   const [listingRes, bookingRes] = await Promise.all([
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listing/${id}`, {
