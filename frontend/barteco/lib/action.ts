@@ -231,6 +231,8 @@ const file = formData.get('image') as File;
   payload.append('image', file);
 }
 
+console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+console.log('Full endpoint:', `${process.env.NEXT_PUBLIC_API_URL}/edit-profile`);
 
   //not using application json becz backend cant read files as json
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/edit-profile`, {

@@ -26,23 +26,20 @@ export default function NextLogin() {
       if (access_token && refresh_token) {
         await supabase.auth.setSession({ access_token, refresh_token })
 
-        // ✅ Call your route handler 
-        const res =
-         await fetch('/api/supabase-signin', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token: access_token }),
-        })
+        // Call your route handler 
+        const res = await fetch('/api/supabase-signin', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ token: access_token }),
+});
 
-        if (res.ok) {
-            console.log('✅ Signed in successfully');
-            // 3. Redirect to dashboard or wherever you want
-            router.push('/dashboard/lister');
-          } else {
-            console.error('Failed to sign in via API route');
-          } 
+if (res.ok) {
+  console.log('✅ Signed in successfully');
+  router.push('/dashboard/lister');
+} else {
+  console.error('Failed to sign in via API route');
+}
+ 
 
     }
   }

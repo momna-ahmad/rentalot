@@ -1,18 +1,20 @@
 // app/api/supabase-signin/route.ts
-import { NextRequest } from 'next/server'
-import { signIn } from '@/auth'
-import { redirect } from 'next/navigation';
+import { NextRequest, NextResponse } from 'next/server';
+import { signIn } from '@/auth';
 
 export async function POST(req: NextRequest) {
-    console.log('post request received at /api/supabase-signin');
-  const body = await req.json()
-  const token = body.token;
-  console.log(token); 
+  console.log('✅ POST request received at /api/supabase-signin');
   
-  const res = await signIn('credentials', {
-    token
-  })
+  const { token } = await req.json();
+  console.log('Received token:', token);
 
-
-  return redirect('/dashboard/lister') ;
+  try {
+    const res = await signIn('credentials', { token });
+    console.log('Sign in successful:', res);
+    
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('Error in supabase-signin route:', err);
+    return NextResponse.json({ success: false, error: 'Failed to sign in' }, { status: 500 });
+  }
 }
