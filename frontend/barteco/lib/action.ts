@@ -209,11 +209,12 @@ export async function handleBooking(prevState: HandleBookingState , formData: Fo
   }
 }
 
-export async function editProfile(
+export async function editProfile( prevState: undefined ,
   formData: FormData) {
   const session = await auth();
   const user = session?.user as CustomSessionUser;
-  
+
+  console.log(formData);
   const name = formData.get('name') as string ;
   const about = formData.get('about') as string
   const phone = formData.get('phone') as string;
