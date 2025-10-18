@@ -28,7 +28,7 @@ export default function NextLogin() {
 
         // ✅ Call your route handler 
         const res =
-         await fetch('/api', {
+         await fetch('/api/supabase-signin', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
