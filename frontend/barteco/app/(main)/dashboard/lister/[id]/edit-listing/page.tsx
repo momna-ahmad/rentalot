@@ -3,6 +3,8 @@
 import { useContext, useState } from 'react';
 import { ListingContext } from '@/context/useListingContext';
 import { useRouter } from 'next/navigation';
+import { FiEdit } from 'react-icons/fi';
+import SearchLocation from '@/components/search-location';
 
 export default function EditListing() {
   const listing = useContext(ListingContext);
@@ -16,30 +18,34 @@ export default function EditListing() {
     const price = formData.get('price');
     const unit = formData.get('unit');
     const category = formData.get('category');
+    const location = formData.get('location');
 
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/edit-listing/${listing?.id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ title, description, price, unit, category }),
+      body: JSON.stringify({ title, description, price, unit, category, location }),
     });
 
-    router.back();
+    router.refresh();
+    setOpen(false);
   }
 
   return (
     <>
+      {/* Edit icon button */}
       <button
         onClick={() => setOpen(true)}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-150"
+        className="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150 ease-in-out shadow-sm flex items-center justify-center"
+        title="Edit Listing"
       >
-        Edit Listing
+        <FiEdit size={18} />
       </button>
 
       {open && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="relative bg-white rounded-lg shadow-lg p-8 w-full max-w-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+          <div className="relative bg-white rounded-lg shadow-lg p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Edit Listing</h2>
 
             <form action={handleEdit} className="space-y-5">
@@ -94,17 +100,18 @@ export default function EditListing() {
                   Unit
                 </label>
                 <select
-  id="unit"
-  name="unit"
-  defaultValue={listing?.unit || ''}
-  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  required
->
-  <option value="" disabled>Select a unit</option>
-  <option value="day">Day</option>
-  <option value="hour">Hour</option>
-</select>
-
+                  id="unit"
+                  name="unit"
+                  defaultValue={listing?.unit || ''}
+                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                >
+                  <option value="" disabled>
+                    Select a unit
+                  </option>
+                  <option value="day">Day</option>
+                  <option value="hour">Hour</option>
+                </select>
               </div>
 
               {/* Category */}
@@ -130,7 +137,17 @@ export default function EditListing() {
                 </select>
               </div>
 
-              {/* Buttons */}
+              {/* Location */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Location
+                </label>
+                <SearchLocation
+                  location={listing?.location || ''}
+                />
+              </div>
+
+              {/* Save Button */}
               <div className="flex justify-between items-center mt-6">
                 <button
                   type="submit"

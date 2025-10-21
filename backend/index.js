@@ -31,7 +31,7 @@ io.use((socket, next) => {
 
 
 app.use(cors({
-  origin: 'https://rentalot-snlf.vercel.app',
+  origin: ['https://rentalot-snlf.vercel.app', 'http://localhost:3000'],
   credentials: true, // ✅ allow cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));

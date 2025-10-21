@@ -174,8 +174,8 @@ router.get("/delete-listing/:id",async (req , res)=>{
 
 router.post("/edit-listing/:id",async (req , res)=>{
   const id = req.params.id ;
-  const {title , description , price , unit , category } = req.body ;
-  const {data , error} = await supabase.from('listings').update({ title, description, price, unit, category }).eq('id',id) ;
+  const {title , description , price , unit , category , location } = req.body ;
+  const {data , error} = await supabase.from('listings').update({ title, description, price, unit, category , location }).eq('id',id) ;
   if(error)
     return res.send(error) ;
   res.send('success') ;

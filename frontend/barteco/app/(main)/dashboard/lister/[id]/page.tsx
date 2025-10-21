@@ -15,15 +15,11 @@ export default async function Listing(props: {
 
   const [listingRes, bookingRes] = await Promise.all([
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/get-listing/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       cache: "no-store",
     }),
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings-for-listing/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       cache: "no-store",
     }),
   ]);
@@ -36,16 +32,23 @@ export default async function Listing(props: {
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10 md:px-20">
       <div className="flex flex-col md:flex-row gap-10 items-start">
+        {/* Left Column: Listing Detail */}
+        <div className="relative w-full md:w-3/5 bg-white rounded-xl shadow-md p-6 space-y-8">
 
-        {/* Left Column: Listing Detail (3/5) */}
-        <div className="w-full md:w-3/5 bg-white rounded-xl shadow-md p-6 space-y-8">
+  {/* Top row with buttons */}
+  <div className="flex justify-end mb-2">
+    <ListingProvider value={listing}>
+      <ActionsOnListings />
+    </ListingProvider>
+  </div>
 
-          {/* Image Preview */}
-          {listing.img_urls?.length > 0 && (
-            <div className="rounded-lg overflow-hidden shadow-sm">
-              <DisplayImg imgs={listing.img_urls} />
-            </div>
-          )}
+  {/* Image Preview */}
+  {listing.img_urls?.length > 0 && (
+    <div className="rounded-lg overflow-hidden shadow-sm">
+      <DisplayImg imgs={listing.img_urls} />
+    </div>
+  )}
+
 
           {/* Title */}
           <h1 className="text-4xl font-bold text-gray-900 tracking-tight leading-snug">
@@ -60,35 +63,44 @@ export default async function Listing(props: {
           {/* Key Details */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <span className="block text-sm font-medium text-gray-500 mb-1">Price</span>
-              <span className="text-xl font-semibold text-gray-800">PKR {listing.price}</span>
+              <span className="block text-sm font-medium text-gray-500 mb-1">
+                Price
+              </span>
+              <span className="text-xl font-semibold text-gray-800">
+                PKR {listing.price}
+              </span>
             </div>
 
             <div>
-              <span className="block text-sm font-medium text-gray-500 mb-1">Unit</span>
-              <span className="text-xl font-semibold text-gray-800 capitalize">{listing.unit}</span>
+              <span className="block text-sm font-medium text-gray-500 mb-1">
+                Unit
+              </span>
+              <span className="text-xl font-semibold text-gray-800 capitalize">
+                {listing.unit}
+              </span>
             </div>
 
             <div>
-              <span className="block text-sm font-medium text-gray-500 mb-1">Category</span>
-              <span className="text-xl font-semibold text-gray-800 capitalize">{listing.category}</span>
+              <span className="block text-sm font-medium text-gray-500 mb-1">
+                Category
+              </span>
+              <span className="text-xl font-semibold text-gray-800 capitalize">
+                {listing.category}
+              </span>
             </div>
 
             <div>
-              <span className="block text-sm font-medium text-gray-500 mb-1">Location</span>
+              <span className="block text-sm font-medium text-gray-500 mb-1">
+                Location
+              </span>
               <span className="text-xl font-semibold text-gray-800 capitalize">
                 {listing.location || "Not provided"}
               </span>
             </div>
           </div>
-
-          {/* Actions */}
-          <ListingProvider value={listing}>
-            <ActionsOnListings />
-          </ListingProvider>
         </div>
 
-        {/* Right Column: Booking Calendar (2/5) */}
+        {/* Right Column: Booking Calendar */}
         <div className="w-full md:w-2/5 bg-white rounded-xl shadow-md p-6">
           <ListingBookingsCalendar bookings={bookings} />
         </div>

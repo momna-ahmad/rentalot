@@ -3,6 +3,7 @@
 import { useContext } from 'react';
 import { ListingContext } from '@/context/useListingContext';
 import { useRouter } from 'next/navigation';
+import { FiTrash } from 'react-icons/fi'; // ✅ import bin icon
 
 export default function Delete() {
   const listing = useContext(ListingContext);
@@ -21,9 +22,10 @@ export default function Delete() {
   return (
     <button
       onClick={handleDelete}
-      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150 ease-in-out shadow-sm"
+      className="p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150 ease-in-out shadow-sm flex items-center justify-center"
+      title="Delete Listing"
     >
-      Delete Listing
+      <FiTrash size={18} /> {/* ✅ bin icon */}
     </button>
   );
 }

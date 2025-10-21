@@ -44,7 +44,7 @@ export default async function Page(props: {
 
         {/* Hero Text */}
         <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-gray-900">
-          Rent smarter with your AI assistant
+          Find, list, and manage rentals easily
         </h1>
         <p className="text-gray-600 text-base sm:text-lg max-w-xl">
           RentaLot is a rental platform for homes, cars, halls,
