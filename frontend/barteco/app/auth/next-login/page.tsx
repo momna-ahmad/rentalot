@@ -33,12 +33,11 @@ export default function NextLogin() {
   body: JSON.stringify({ token: access_token }),
 });
 
-if (res.ok) {
-  console.log('✅ Signed in successfully');
-  router.push('/dashboard/lister');
-} else {
-  console.error('Failed to sign in via API route');
-}
+if (!res.ok) {
+            console.error('Failed to process sign-in on server (No redirect occurred)');
+            // You might want to push to an error page or the home page as a fallback
+            router.push('/'); 
+        }
  
 
     }
