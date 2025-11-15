@@ -102,7 +102,7 @@ export default async function ListingDetail(props: {
                 bookings={bookings}
               />
               
-              <p className="text-center text-sm text-gray-500 mt-4">You won't be charged yet</p>
+              <p className="text-center text-sm text-gray-500 mt-4">You **won&apos;t** be charged yet</p>
             </div>
           </div>
         </div>
