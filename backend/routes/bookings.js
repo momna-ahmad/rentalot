@@ -57,6 +57,7 @@ router.get('/my-bookings' , authenticate , async(req , res)=>{
   .gte('start_date_time', new Date().toISOString())
   .order('start_date_time', { ascending: true });
 
+  console.log('my bookings' , data) ;
   return res.status(200).json(data) ;
 }) ;
 

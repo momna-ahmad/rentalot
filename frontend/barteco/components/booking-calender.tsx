@@ -6,6 +6,13 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { DateSelectArg } from './book-listing';
 import { Booking } from './bookings';
 
+// Utility function to normalize the date to 12:00 AM (00:00:00)
+const getTodayAtMidnight = () => {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0); // Sets hours, minutes, seconds, and milliseconds to zero
+  return date;
+};
+
 export default function BookingCalendar({
   unit,
   onDateSelect,
@@ -15,7 +22,8 @@ export default function BookingCalendar({
   onDateSelect: (arg: DateSelectArg) => void;
   bookings: Booking[];
 }) {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  // FIX APPLIED HERE: Initialize by calling the utility function
+  const [selectedDate, setSelectedDate] = useState<Date | null>(getTodayAtMidnight());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   /** ✅ Utility: Normalize a date to remove time */
@@ -66,7 +74,9 @@ export default function BookingCalendar({
         start = combineDateAndTime(selectedDate, hour);
         end = combineDateAndTime(selectedDate, hour + 1);
       }
-
+      
+      // Ensure the start date uses the time from the moment selectedDate was set (00:00:00) 
+      // or the combined hour slot.
       // Use local time string (not UTC)
       const localISOString = start.toLocaleString('sv-SE').replace(' ', 'T');
       onDateSelect({
@@ -128,7 +138,7 @@ export default function BookingCalendar({
                 : hour > 12
                 ? hour - 12
                 : hour
-              }:00 ${hour >= 12 ? 'PM' : 'AM'}`;
+                }:00 ${hour >= 12 ? 'PM' : 'AM'}`;
               return (
                 <button
                   key={hour}

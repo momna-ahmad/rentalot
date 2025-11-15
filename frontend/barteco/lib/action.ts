@@ -8,6 +8,7 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { CustomSessionUser } from '@/auth.config';
 import { Booking } from '@/components/bookings';
+import { ReviewModalData } from '@/components/bookings';
 
 interface HandleSubmitState {
   title?: string;
@@ -219,21 +220,21 @@ export async function editProfile( prevState: undefined ,
   const about = formData.get('about') as string
   const phone = formData.get('phone') as string;
 
-const payload = new FormData();
-payload.append('name',  name);
-payload.append('about', about);
-payload.append('phone', phone );
+  const payload = new FormData();
+  payload.append('name',  name);
+  payload.append('about', about);
+  payload.append('phone', phone );
 
 
-const file = formData.get('image') as File;
-// Append files
-//to allow for no profile pic
-  if (file && file.size > 0) {
-  payload.append('image', file);
-}
+  const file = formData.get('image') as File;
+  // Append files
+  //to allow for no profile pic
+    if (file && file.size > 0) {
+    payload.append('image', file);
+  }
 
-console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
-console.log('Full endpoint:', `${process.env.NEXT_PUBLIC_API_URL}/edit-profile`);
+  console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+  console.log('Full endpoint:', `${process.env.NEXT_PUBLIC_API_URL}/edit-profile`);
 
   //not using application json becz backend cant read files as json
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/edit-profile`, {
@@ -253,4 +254,36 @@ console.log('Full endpoint:', `${process.env.NEXT_PUBLIC_API_URL}/edit-profile`)
   // Optional: handle response
   const result = await res.json();
   return redirect('/dashboard/lister/profile') ;
+}
+
+export async function postReview(prevState: ReviewModalData, formData: FormData){
+
+  const session = await auth();
+  const user = session?.user as CustomSessionUser;
+
+  const rating = formData.get("rating");
+  const reviewText = formData.get("reviewText");
+
+  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post-review`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${user.token}`,
+    },
+    body: JSON.stringify(
+      {
+        type: prevState.type,
+        listingId: prevState.type === "listing" ? prevState.listingId : null,
+        ownerId: prevState.type === "owner" ? prevState.ownerId : null,
+        rating,
+        reviewText,
+      }
+    ),
+  });
+
+  // Always return ReviewModalData
+  return {
+    ...prevState,
+    isOpen: false, // you can close modal automatically if you want
+  };
 }

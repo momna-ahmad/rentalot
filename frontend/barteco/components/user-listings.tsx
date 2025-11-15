@@ -26,17 +26,18 @@ export default async function UserListings() {
         listings.map((listing: Listing) => (
           <div
             key={listing.id}
-            className="group/item flex items-start gap-4 border border-gray-300 rounded-lg shadow-sm p-6 hover:shadow-md transition duration-200 bg-white"
+            className="group/item flex items-start gap-4 border border-gray-200 rounded-lg shadow-sm p-6 hover:shadow-md transition duration-200 bg-white" // Changed border to border-gray-200
           >
             {/* Left: Image */}
             {listing.img_urls?.length > 0 && (
-              <div className="w-32 h-32 flex-shrink-0 rounded-md overflow-hidden border">
+              // Increased width from w-32 to w-40, keeping height at h-32
+              <div className="w-40 h-32 flex-shrink-0 rounded-md overflow-hidden border border-gray-200"> 
                 <img
                 src={listing.img_urls[0]}
                 alt={listing.title}
                 className="w-full h-full object-cover"
                 />
-                </div>
+              </div>
               )}
 
 
@@ -44,7 +45,7 @@ export default async function UserListings() {
             <div className="flex-1">
               <Link href={`/dashboard/lister/${listing.id}`} className="block space-y-2">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-gray-800">{listing.title}</h2>
+                  <h2 className="text-xl font-semibold text-gray-800 capitalize">{listing.title}</h2> {/* Added capitalize class */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

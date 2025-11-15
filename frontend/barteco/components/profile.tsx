@@ -17,19 +17,25 @@ export default function Profile() {
 
   return (
     <Link href="/dashboard/lister/profile">
-      <div
-        className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 px-2 py-1 rounded transition"
+      
+        {hasImage ? (
+          <div
+        className="w-11 h-11 rounded-full overflow-hidden border border-gray-300 shadow"
         title="Your Profile"
       >
-        {hasImage ? (
           <Image
             src={profile.profile}
             alt="Profile"
             width={32}
             height={32}
-            className="rounded-full object-cover"
+            className="object-cover w-full h-full"
           />
+          </div>
         ) : (
+          <div
+        className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 px-2 py-1 rounded transition"
+        title="Your Profile"
+      >
           <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
             {/* Better user icon */}
             <svg
@@ -41,8 +47,9 @@ export default function Profile() {
               <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12Zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2h19.2v-1.2c0-3.2-6.4-4.8-9.6-4.8Z" />
             </svg>
           </div>
+          </div>
         )}
-      </div>
+      
     </Link>
   );
 }

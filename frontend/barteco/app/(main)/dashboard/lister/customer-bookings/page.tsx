@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import ListingBookingsCalendar from "@/components/listing-bookings-calender";
+import UserBookingsCalendar from "@/components/user-booking-calender";
 import api from "@/hooks/axiosInstance";
 import { CustomSessionUser } from "@/auth.config";
 
@@ -17,10 +17,10 @@ export default async function CustomerBookings(){
         },
       });
 
-      console.log('customer bookings ' , res.data) ;
+      const allowReviewsOnBookings = false;
     return (
         <>
-        <ListingBookingsCalendar bookings={res.data}/>
+        <UserBookingsCalendar bookings={res.data}  allowReviews={allowReviewsOnBookings} />
         </>
     )
 }

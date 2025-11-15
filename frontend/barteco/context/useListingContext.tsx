@@ -11,7 +11,7 @@ export interface Listing{
     category : string ,
     location : string ,
     img_urls : string[]
-    user_id : string
+    owner : string
 }
 export const ListingContext = createContext<Listing | null>(null);
  

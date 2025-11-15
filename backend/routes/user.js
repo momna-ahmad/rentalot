@@ -164,10 +164,11 @@ router.get("/get-listing/:id",async (req , res)=>{
 
 router.get("/delete-listing/:id",async (req , res)=>{
   const id = req.params.id ;
-  
+  console.log('deleting listing ', id) ;
   const {data , error} = await supabase.from('listings').delete().eq('id',id) ;
   if(error)
     return res.send(error) ;
+  console.log(data) ;
   res.send('success') ;
 
 });
@@ -278,10 +279,37 @@ router.get('/logout' , (req , res)=>{
 }) ;
 
 //fetch profile for customer
-router.get('/get-profile/:id' , async( req , res)=>{
-  const {id} = req.params ; 
-  const { data : profile , error} = await supabase.from('users').select('*').eq('id',id).single() ;
-  return res.status(200).json({profile}) ;
+router.get('/get-profile/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Fetch user profile
+    const { data: profile, error: profileError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (profileError) throw profileError;
+
+    let reviews = [];
+    if (profile.review_ids && profile.review_ids.length > 0) {
+      // Fetch reviews based on review_ids array
+      const { data: reviewData, error: reviewError } = await supabase
+        .from('reviews')
+        .select('*')
+        .in('id', profile.review_ids);
+
+      if (reviewError) throw reviewError;
+      reviews = reviewData;
+    }
+    console.log(reviews) ;
+    return res.status(200).json({ profile, reviews });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message || "Server error" });
+  }
 });
+
 
 export default router;
