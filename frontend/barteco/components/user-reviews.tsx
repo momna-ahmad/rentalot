@@ -82,7 +82,7 @@ const ReviewsSlider = ({ reviews }: { reviews: Review[] }) => {
             // MODIFICATION: Added max-w-xl to constrain text width slightly for readability
             className="italic text-lg text-gray-700 leading-relaxed max-w-xl"
           >
-            "{currentReview.review}"
+            **&quot;**{currentReview.review}**&quot;**
           </p>
           
           {/* Optional: Display creation date */}
